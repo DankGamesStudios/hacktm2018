@@ -17,5 +17,13 @@ module.exports = {
             ignored: /node_modules/
         }
     },
-    devtool: 'source-map'
+    devtool: 'source-map',
+    module: {
+        rules: [
+            {
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                loader: "file-loader"
+            }
+        ]
+    },
 };
