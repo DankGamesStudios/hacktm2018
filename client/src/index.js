@@ -10,7 +10,7 @@ import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js'
 import Boot from './states/boot';
 // import Preload from 'states/preload';
 import Menu from './states/menu';
-// import Game from 'states/game';
+import Game from './states/game';
 /**
  * Create a new Phaser game instance.
  * And render a single sprite so we make sure it works.
@@ -34,8 +34,8 @@ import Menu from './states/menu';
 
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO);
-game.state.add('Boot', new Boot());
+game.state.add('Boot', Boot);
 // game.state.add('Preloader', Preload);
 game.state.add('Menu', Menu);
-// game.state.add('Game', Game);
+game.state.add('Game', Game);
 game.state.start('Boot');
