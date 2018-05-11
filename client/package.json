@@ -1,0 +1,20 @@
+{
+  "name": "phaser-starter",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "webpack:dev": "webpack --config webpack.config.js --progress --colors",
+    "server:dev": "webpack-dev-server --config webpack.config.js --open"
+  },
+  "author": "",
+  "license": "Apache",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "phaser-ce": "^2.8.0"
+  },
+  "devDependencies": {
+    "expose-loader": "^0.7.3",
+    "webpack": "^3.0.0",
+    "webpack-dev-server": "^2.5.0"
+  }
+}

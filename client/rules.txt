@@ -1,0 +1,25 @@
+culoarul jucatorului de 4x4
+
+8x24
+
+poti sa sari 3 in orice directie. inclusiv diagonala
+ai health
+ultimul ramas in viata castiga
+
+daca ajung ambii pe acelasi square: random - cine pierde
+
+
+power-ups
+sarit: 3 ture poti sarii 5
+health: health plus
+
+
+
+api
+
+/move - fiecare isi trimite pozitia urmatoare
+are numarul turei, game id
+
+/polling - sa ia next turn
+- iti da toate deciziile care s-au intamplat pana acum
+- iti da si urmatorul rand de tiles cand toti au votat
