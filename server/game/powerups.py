@@ -53,3 +53,30 @@ class Shield(Powerup):
     def activate(self, game, on_player):
         print("activate shield")
         on_player.side_effects["shield"] = self.turns
+
+
+class Bomb(Powerup):
+    def __init__(self):
+        super().__init__("Bomb")
+        self.XL_damage = 25
+        self.M_damage = 15
+        self.S_damage = 5
+
+    def activate(self, game, on_player):
+
+        def get_neighbours(position, distance_to_neighbour):
+            x = position[0]
+            y = position[1]
+            return (
+                [(x - distance_to_neighbour, ny) for ny in range(y - distance_to_neighbour, y + distance_to_neighbour, 1)
+                 if 0 <= x - distance_to_neighbour < GRID_WIDTH and 0 <= ny < GRID_HEIGHT] +
+                [(nx, y + distance_to_neighbour) for nx in range(x - distance_to_neighbour, x + distance_to_neighbour, 1)
+                 if 0 <= nx < GRID_WIDTH and 0 <= y + distance_to_neighbour < GRID_HEIGHT] +
+                [(x + distance_to_neighbour, ny) for ny in range(y + distance_to_neighbour, y - distance_to_neighbour, -1)
+                 if 0 <= x + distance_to_neighbour < GRID_WIDTH and 0 <= ny < GRID_HEIGHT] +
+                [(nx, y - distance_to_neighbour) for nx in range(x + distance_to_neighbour, x - distance_to_neighbour, -1)
+                 if 0 <= nx < GRID_WIDTH and 0 <= y - distance_to_neighbour < GRID_HEIGHT]
+            )
+        XL_damage_pos = get_neighbours(on_player.position, 1)
+        M_damage_pos = get_neighbours(on_player.position, 2)
+        S_damage_pos = get_neighbours(on_player.position, 3)
