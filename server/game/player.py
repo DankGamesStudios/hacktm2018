@@ -18,7 +18,7 @@ class Player(object):
             name=self.name,
             health=self.health,
             x=self.position[0],
-            y=self.position[0]
+            y=self.position[1]
         )
 
     def move(self, horizontal_pos, vertical_pos):
