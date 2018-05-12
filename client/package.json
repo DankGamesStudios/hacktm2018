@@ -10,7 +10,8 @@
   "license": "Apache",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "phaser-ce": "^2.8.0"
+    "phaser-ce": "^2.8.0",
+    "socket.io-client": "^2.1.0"
   },
   "devDependencies": {
     "expose-loader": "^0.7.3",
