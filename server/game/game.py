@@ -4,7 +4,10 @@
     as the logic gets refined
 """
 import uuid
-from . import player, grid, powerups
+import random
+from . import player, grid, powerups, options
+
+SAME_SQUARE_DAMAGE = 20
 
 
 class Game(object):
@@ -20,6 +23,13 @@ class Game(object):
             if position == player.position:
                 return True
         return False
+    
+    def _conflics_position(self, position):
+        conflicts = []
+        for player in self.players.values():
+            if position == player.position:
+                conflicts.append(player)
+        return conflicts
 
     def add_player(self, player_id=uuid.uuid4(), name="Player", position=[0, 0]):
         if not self._is_position_busy(position) or not player_id in self.players.keys():
@@ -40,6 +50,74 @@ class Game(object):
 
     def activate_powerup(self):
         for player in self.players.values():
-            placeholder = grid[player.position[0]][player.position[1]]
+            x, y = player.position
+            placeholder = self.grid.squares[x][y]
             if placeholder.powerup:
                 placeholder.powerup.activate(self, player)
+                placeholder = grid.EMPTY
+            player.turn_effects()
+
+    def resolve_conflicts(self):
+        """ go through each player and resolve conflicts"""
+        for player in self.players.values():
+            conflicts = self._conflics_position(player.position)
+            if len(conflicts) > 1:
+                # we have a conflict
+                luck = [random.randint(0, 10) for player in conflicts]
+                winner = max(luck)
+                losers = luck.remove(winner)
+                self.kick_losers(losers)
+
+    def kick_losers(self, losers):
+        """ they should move to a free adjacent cell/square.
+            this be one huge function, many apologies."""
+        for player in losers:
+            player.damage(SAME_SQUARE_DAMAGE)
+            x, y = player.position
+            # try west
+            if (0 >= (x - 1) > options.GRID_WIDTH and
+                not self._is_position_busy([x - 1, y])
+                ):
+                player.position = [x - 1, y]
+            # else north-west (lol, like kanye's daughter)
+            elif (0 >= (y - 1) > options.GRID_HEIGHT and
+                  0 >= (x - 1) > options.GRID_WIDTH and
+                  not self._is_position_busy([x -1, y - 1])
+                  ): 
+                player.position = [x -1, y - 1]
+            # else try north
+            elif (0 >= (y - 1) > options.GRID_HEIGHT and
+                  not self._is_position_busy([x, y - 1])
+                  ):
+                player.position = [x, y - 1]
+            # else try north-east
+            elif (0 >= (y - 1) > options.GRID_HEIGHT and
+                  0 >= (x + 1) > options.GRID_WIDTH and
+                  not self._is_position_busy([x + 1, y - 1])
+                  ):
+                player.position = [x + 1, y - 1]
+            # else try east
+            elif (0 >= (x + 1) > options.GRID_WIDTH and
+                not self._is_position_busy([x + 1, y])
+                ):
+                player.position = [x + 1, y]
+            # else try south-east
+            elif (0 >= (y + 1) > options.GRID_HEIGHT and
+                  0 >= (x + 1) > options.GRID_WIDTH and
+                  not self._is_position_busy([x + 1, y + 1])
+                  ):
+                player.position = [x + 1, y + 1]
+            # else try south
+            elif (0 >= (y + 1) > options.GRID_HEIGHT and
+                  not self._is_position_busy([x, y + 1])
+                  ):
+                player.position = [x, y + 1]
+            # else try south-west
+            elif (0 >= (y + 1) > options.GRID_HEIGHT and
+                  0 >= (x - 1) > options.GRID_WIDTH and
+                  not self._is_position_busy([x - 1, y + 1])
+                  ):
+                player.position = [x - 1, y + 1]
+            # else is west
+            else:
+                player.position = [x - 1, y]

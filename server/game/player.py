@@ -32,9 +32,10 @@ class Player(object):
         return True
 
     def position_in_grid_range(self, row_coord, col_coord):
-        return 0 <= row_coord < GRID_HEIGHT or 0 <= col_coord < GRID_WIDTH
+        return 0 <= row_coord < GRID_HEIGHT and 0 <= col_coord < GRID_WIDTH
 
     def move(self, horizontal_pos, vertical_pos):
+        """ change player position by a horizontal and vertical delta."""
         if horizontal_pos in MOVE_LIMITS and vertical_pos in MOVE_LIMITS:
             horizontal_coord = self.position[0] + horizontal_pos
             vertical_coord = self.position[1] + vertical_pos
@@ -48,16 +49,24 @@ class Player(object):
         return self.position
 
     def damage(self, dmg_value):
+        """ damage is applied if the player has side_effects that allow it.
+            i.e. a shield negates damage, a poison like effect
+            can enhance damage"""
         if(self.can_take_damage()):
             # here we'll add if it's affected by negative buffs
             self.health -= dmg_value
 
     def can_take_damage(self):
+        """ determines if damage can be applied to player
+            is a separate function because we anticipate a growth in logic here
+            """
         result = True
         if self.side_effects["shield"] > 0:
             result = False
         return result
-    
+
     def turn_effects(self):
+        """ turn effects means that the remaining turns for
+            various effects decreases."""
         if self.side_effects["shield"] > 0:
             self.side_effects["shield"] -= 1

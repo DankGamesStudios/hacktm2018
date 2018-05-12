@@ -4,6 +4,7 @@ import game.powerups as powerups
 import game.game as game
 import game.grid as grid
 import game.player as player
+import game.options as options
 
 
 def test_game():
@@ -19,8 +20,8 @@ def test_game():
 
 def test_grid():
     test_obj = grid.Grid()
-    assert len(test_obj.squares) == grid.GRID_HEIGHT
-    assert len(test_obj.squares[0]) == grid.GRID_WIDTH
+    assert len(test_obj.squares) == options.GRID_HEIGHT
+    assert len(test_obj.squares[0]) == options.GRID_WIDTH
 
 
 def test_player():
