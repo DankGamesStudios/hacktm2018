@@ -22,12 +22,17 @@ export default class Game extends Phaser.State {
         //TODO: use arrow functions, but webpack/babel did not cooperate
         this.selectNextTile = this.selectNextTile.bind(this);
 
+        this.player_start_y = 700;
+        this.player_start_x = 250;
+        this.player_spacing_x = 200;
+
         // DATA
         this.rows = []; // Top (0) -> Down (max-1)
         //Each row Left (0) -> Right (max-1)
         this.nr_rows = 5;
         this.nr_columns = 12;
         this.players = {};
+        this.nr_players = 0;
         this.timer = null;
     }
 
@@ -47,12 +52,28 @@ export default class Game extends Phaser.State {
         let sprite = this.game.add.sprite(tile.x, tile.y, key);
         sprite.anchor.setTo(0.5, 0.5);
         sprite.animations.add('run');
-        this.players[name] = {
+        let nameSprite = this.game.add.text(
+            this.player_start_x + this.nr_players * this.player_spacing_x,
+            this.player_start_y,
             name,
+            {font: '30px', fill: '#9eff63', align: 'center'});
+        nameSprite.anchor.set(0.5, 0.5);
+        let healthSprite = this.game.add.text(
+            this.player_start_x + this.nr_players * this.player_spacing_x,
+            this.player_start_y + 70,
+            '9000+',
+            {font: '30px', fill: '#9eff63', align: 'center'});
+        healthSprite.anchor.set(0.5, 0.5);
+        this.players[name] = {
+            id: this.nr_players,
+            name,
+            nameSprite,
+            healthSprite,
             sprite,
             xTile,
             yTile,
         }
+        this.nr_players++;
     }
 
     selectNextTile(selectedTile) {
@@ -85,12 +106,15 @@ export default class Game extends Phaser.State {
         }
         this.setNewRowState({});
         this.addPlayer('Player1', 4, 3);
+        this.addPlayer('Player2', 10, 3);
         this.timer = new VisualTimer({
             game: this.game,
             x: 120,
             y: 30,
             seconds: 10,
-            onComplete: function () {console.log('timer completed')}
+            onComplete: function () {
+                console.log('timer completed')
+            }
         });
         console.log('Game state');
     };
