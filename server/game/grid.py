@@ -27,18 +27,18 @@ OPTIONS = [
 OPTION_SIZE = len(OPTIONS) - 1
 
 
-class Square(object):
-    """ Class to model a square in the Grid.
-        This and Placeholder could be superfluous.""" 
-    def __init__(self, placeholder=None):
-        if placeholder is None:
-            print("creating random square")
-            option = random.randint(0, OPTION_SIZE)
-            placeholder = OPTIONS[option]
-        self.placeholder = placeholder
+# class Square(object):
+#     """ Class to model a square in the Grid.
+#         This and Placeholder could be superfluous.""" 
+#     def __init__(self, placeholder=None):
+#         if placeholder is None:
+#             print("creating random square")
+#             option = random.randint(0, OPTION_SIZE)
+#             placeholder = OPTIONS[option]
+#         self.placeholder = placeholder
 
-    def __str__(self):
-        return u"[" + self.placeholder.name + u"]"
+#     def __str__(self):
+#         return u"[" + self.placeholder.name + u"]"
 
 
 class Grid(object):
@@ -50,13 +50,18 @@ class Grid(object):
         """
         print("creating grid")
         self.squares = [
-            [Square() for _ in range(GRID_WIDTH)]
+            [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
             for _ in range(GRID_HEIGHT - 2)
         ] + [
-            [Square(EMPTY) for _ in range(GRID_WIDTH)]
+            [EMPTY for _ in range(GRID_WIDTH)]
             for _ in range(2)
         ]
-        self.next_row = [Square() for _ in range(GRID_WIDTH)]
+        self.next_row = [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
+
+    def _get_a_placeholder(self):
+        option = random.randint(0, OPTION_SIZE)
+        placeholder = OPTIONS[option]
+        return placeholder
 
     def row_generate(self):
         """ row_generate adds a row at the start of the grid, like a queue,
@@ -64,7 +69,7 @@ class Grid(object):
         print("generating next row ...")
         self.squares.pop(GRID_HEIGHT - 1) # pop the last row
         self.squares.insert(0, self.next_row)
-        self.next_row = [Square() for _ in range(GRID_WIDTH)]
+        self.next_row = [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
 
 
     def print_grid(self):
