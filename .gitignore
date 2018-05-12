@@ -2,3 +2,7 @@
 node_modules
 client/dist/*
 !/client/dist/index.html
+
+# Server
+.pytest_cache
+__pycache__
