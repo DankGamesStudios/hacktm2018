@@ -9,6 +9,11 @@ export default class Boot extends Phaser.State {
     preload(game) {
         this.game.load.image('plus', require('../../assets/images/plus.png'));
         this.game.load.image('minus', require('../../assets/images/minus.png'));
+
+        this.game.load.atlasJSONHash('player',
+            require('../../assets/sprites/running_bot.png'),
+            require('../../assets/sprites/running_bot.json')
+        );
     }
 
     create(game) {

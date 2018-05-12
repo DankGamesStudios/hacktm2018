@@ -2,23 +2,30 @@ import PIXI from 'expose-loader?PIXI!phaser-ce/build/custom/pixi.js';
 import p2 from 'expose-loader?p2!phaser-ce/build/custom/p2.js';
 import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js';
 
+// Phaser x low->high === left->right
+// Phaser y low->high === top->down
+
 export default class Game extends Phaser.State {
 
     constructor() {
         super();
-        this.rows = []; // Top (0) -> Down (max - 1)
         this.board_margin_x = 70;
         this.board_margin_y = 70;
         this.padding_x = 20;
         this.padding_y = 20;
         this.tile_size = 60;
         this.row_size = 100;
-        this.nr_rows = 5;
-        this.nr_columns = 12;
         this.move_rows = false;
         this.selectedTile = null;
         //TODO: use arrow functions, but webpack/babel did not cooperate
         this.selectNextTile = this.selectNextTile.bind(this);
+
+        // DATA
+        this.rows = []; // Top (0) -> Down (max-1)
+        //Each row Left (0) -> Right (max-1)
+        this.nr_rows = 5;
+        this.nr_columns = 12;
+        this.players = {}
     }
 
     getSelectedVersion(currentVersion) {
@@ -30,6 +37,19 @@ export default class Game extends Phaser.State {
 
     preload(game) {
 
+    }
+
+    addPlayer(name, xTile, yTile, key = 'player') {
+        let tile = this.rows[yTile][xTile];
+        let sprite = this.game.add.sprite(tile.x, tile.y, key);
+        sprite.anchor.setTo(0.5, 0.5);
+        sprite.animations.add('run');
+        this.players[name] = {
+            name,
+            sprite,
+            xTile,
+            yTile,
+        }
     }
 
     selectNextTile(selectedTile) {
@@ -61,6 +81,7 @@ export default class Game extends Phaser.State {
             this.rows.push(new_row);
         }
         this.setNewRowState({});
+        this.addPlayer('Player1', 4, 3);
         console.log('Game state');
     };
 
@@ -87,12 +108,30 @@ export default class Game extends Phaser.State {
             newRow.push(this.createTile(x, y, 'minus'));
         }
         this.rows.splice(0, 0, newRow);
-        console.log('adding new row', this.rows);
+        // console.log('adding new row', this.rows);
+    }
+
+    updatePlayers() {
+        let player1 = this.players['Player1'];
+        player1.sprite.bringToTop();
+        if (this.selectedTile) {
+            player1.sprite.angle += 30;
+            let newLocation = {x: this.selectedTile.x, y: this.selectedTile.y + this.row_size};
+            player1.sprite.animations.play('run', 15, true);
+            // this.game.add.tween(player1.sprite).to(newLocation, 200, 'Bounce', true);
+            let animationTime = 1000;
+            this.game.add.tween(player1.sprite).to(newLocation, animationTime, Phaser.Easing.Bounce.Out, true, 0);
+            //TODO find other way to cancel animation
+            window.setTimeout(() => {
+                    player1.sprite.animations.stop(true);
+                },
+                animationTime);
+        }
     }
 
     update(game) {
         if (this.move_rows) {
-            console.log('moving rows', this.rows);
+            // console.log('moving rows', this.rows);
             for (let rIndex = 0; rIndex < this.rows.length; rIndex++) {
                 let row = this.rows[rIndex];
                 for (let tileIndex = 0; tileIndex < row.length; tileIndex++) {
@@ -102,7 +141,8 @@ export default class Game extends Phaser.State {
             }
             this.addNewRow();
             this.move_rows = false;
-            console.log('rows moved');
+            this.updatePlayers();
+            // console.log('rows moved');
         }
     };
 };
