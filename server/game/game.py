@@ -13,11 +13,12 @@ class Game(object):
     def __init__(self):
         pass # dunno what to do here yet
     
-    def start(self):
+    def start(self, player_no=4):
         self.grid = grid.Grid()
         print("starting game:")
         self.grid.print_grid()
         print("add players")
         self.players = {
-            "player one": player.Player("player one", (0, 0))
+            "player {}".format(index): player.Player("player {}".format(index), (0, index))
+            for index in range(player_no)
         }

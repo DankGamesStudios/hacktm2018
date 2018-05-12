@@ -1,6 +1,6 @@
 """ Module for player logic. This could include the AI as well. """
-from exceptions import IllegalMoveException
-from grid import GRID_HEIGHT, GRID_WIDTH
+from .exceptions import IllegalMoveException
+from .grid import GRID_HEIGHT, GRID_WIDTH
 
 MOVE_LIMITS = range(-3, 3)
 

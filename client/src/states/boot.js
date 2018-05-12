@@ -15,8 +15,8 @@ export default class Boot extends Phaser.State {
         this.game.load.image('shield', require('../../assets/images/shieldBronze.png'));
 
         this.game.load.atlasJSONHash('player',
-            require('../../assets/sprites/running_bot.png'),
-            require('../../assets/sprites/running_bot.json')
+            require('../../assets/sprites/character.png'),
+            require('../../assets/sprites/character.json')
         );
 
         this.game.load.spritesheet('timer', require('../../assets/images/timer.png'), 150, 20);

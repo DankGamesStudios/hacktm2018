@@ -66,7 +66,14 @@ export default class GameManager {
         s.addEventListener('message', function (m) {
             console.log(m.data);
         });
-        return s;
+        this.availablePlayers = 1;
+        this.keepalive = () => {
+            s.send(JSON.stringify({
+                action: "KEEP_ALIVE"
+            }));
+            window.setTimeout(this.keepalive, 500);
+        };
+        window.setTimeout(this.keepalive, 500);
     }
 
     getAvailablePlayers() {
