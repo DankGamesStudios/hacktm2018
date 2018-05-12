@@ -2,6 +2,8 @@ import PIXI from 'expose-loader?PIXI!phaser-ce/build/custom/pixi.js';
 import p2 from 'expose-loader?p2!phaser-ce/build/custom/p2.js';
 import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js';
 
+import VisualTimer from '../components/timer';
+
 // Phaser x low->high === left->right
 // Phaser y low->high === top->down
 
@@ -9,8 +11,8 @@ export default class Game extends Phaser.State {
 
     constructor() {
         super();
-        this.board_margin_x = 70;
-        this.board_margin_y = 70;
+        this.board_margin_x = 100;
+        this.board_margin_y = 170;
         this.padding_x = 20;
         this.padding_y = 20;
         this.tile_size = 60;
@@ -20,12 +22,18 @@ export default class Game extends Phaser.State {
         //TODO: use arrow functions, but webpack/babel did not cooperate
         this.selectNextTile = this.selectNextTile.bind(this);
 
+        this.player_start_y = 700;
+        this.player_start_x = 250;
+        this.player_spacing_x = 200;
+
         // DATA
         this.rows = []; // Top (0) -> Down (max-1)
         //Each row Left (0) -> Right (max-1)
         this.nr_rows = 5;
         this.nr_columns = 12;
-        this.players = {}
+        this.players = {};
+        this.nr_players = 0;
+        this.timer = null;
     }
 
     getSelectedVersion(currentVersion) {
@@ -44,12 +52,28 @@ export default class Game extends Phaser.State {
         let sprite = this.game.add.sprite(tile.x, tile.y, key);
         sprite.anchor.setTo(0.5, 0.5);
         sprite.animations.add('run');
-        this.players[name] = {
+        let nameSprite = this.game.add.text(
+            this.player_start_x + this.nr_players * this.player_spacing_x,
+            this.player_start_y,
             name,
+            {font: '30px', fill: '#9eff63', align: 'center'});
+        nameSprite.anchor.set(0.5, 0.5);
+        let healthSprite = this.game.add.text(
+            this.player_start_x + this.nr_players * this.player_spacing_x,
+            this.player_start_y + 70,
+            '9000+',
+            {font: '30px', fill: '#9eff63', align: 'center'});
+        healthSprite.anchor.set(0.5, 0.5);
+        this.players[name] = {
+            id: this.nr_players,
+            name,
+            nameSprite,
+            healthSprite,
             sprite,
             xTile,
             yTile,
         }
+        this.nr_players++;
     }
 
     selectNextTile(selectedTile) {
@@ -82,6 +106,16 @@ export default class Game extends Phaser.State {
         }
         this.setNewRowState({});
         this.addPlayer('Player1', 4, 3);
+        this.addPlayer('Player2', 10, 3);
+        this.timer = new VisualTimer({
+            game: this.game,
+            x: 120,
+            y: 30,
+            seconds: 10,
+            onComplete: function () {
+                console.log('timer completed')
+            }
+        });
         console.log('Game state');
     };
 
@@ -90,6 +124,8 @@ export default class Game extends Phaser.State {
         this.move_rows = true;
         window.setTimeout(() => {
             this.setNewRowState({});
+            this.timer.reset();
+            this.timer.start();
         }, 5000);
     }
 
@@ -111,11 +147,24 @@ export default class Game extends Phaser.State {
         // console.log('adding new row', this.rows);
     }
 
+    setDirection(player, destination) {
+        if (player.x > destination.x) {
+            player.scale.x = 1;
+        } else {
+            player.scale.x = -1;
+        }
+        // if (player.y > destination.y) {
+        //     player.angle = 30;
+        // } else {
+        //     player.angle = -30;
+        // }
+    }
+
     updatePlayers() {
         let player1 = this.players['Player1'];
         player1.sprite.bringToTop();
         if (this.selectedTile) {
-            player1.sprite.angle += 30;
+            player1.sprite.angle = this.setDirection(player1.sprite, this.selectedTile);
             let newLocation = {x: this.selectedTile.x, y: this.selectedTile.y + this.row_size};
             player1.sprite.animations.play('run', 15, true);
             // this.game.add.tween(player1.sprite).to(newLocation, 200, 'Bounce', true);
