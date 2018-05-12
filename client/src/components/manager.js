@@ -9,6 +9,9 @@ export default class GameManager {
         });
         s.addEventListener('open', function (m) {
             console.log("websocket connection open");
+            s.send(JSON.stringify({
+                action: "CREATE_PLAYER_ID"
+            }));
         });
         s.addEventListener('message', function (m) {
             console.log(m.data);
