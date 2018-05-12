@@ -11,9 +11,12 @@ class Player(object):
         print("creating player")
         self.health = 100
         self.name = name
-        self.position = list(position)
-        self.valid_position()
         self.my_id = player_id
+        self.position = list(position)
+        self.side_effects = {
+            "shield": 0
+        }
+        self.valid_position()
     
     def __str__(self):
         return "{name}[{health}] at ({x}, {y})".format(
@@ -29,7 +32,7 @@ class Player(object):
         return True
 
     def position_in_grid_range(self, row_coord, col_coord):
-        return row_coord <= GRID_HEIGHT or col_coord <= GRID_WIDTH
+        return 0 <= row_coord < GRID_HEIGHT or 0 <= col_coord < GRID_WIDTH
 
     def move(self, horizontal_pos, vertical_pos):
         if horizontal_pos in MOVE_LIMITS and vertical_pos in MOVE_LIMITS:
@@ -43,3 +46,18 @@ class Player(object):
         else:
             raise IllegalMoveException("Player moves not in range {}".format(MOVE_LIMITS))
         return self.position
+
+    def damage(self, dmg_value):
+        if(self.can_take_damage()):
+            # here we'll add if it's affected by negative buffs
+            self.health -= dmg_value
+
+    def can_take_damage(self):
+        result = True
+        if self.side_effects["shield"] > 0:
+            result = False
+        return result
+    
+    def turn_effects(self):
+        if self.side_effects["shield"] > 0:
+            self.side_effects["shield"] -= 1

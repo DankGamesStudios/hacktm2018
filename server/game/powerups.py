@@ -31,7 +31,7 @@ class Laser(Powerup):
             # we must take into account that player could have a shield
             # or negative effects, that could alter or negate this damage
             if player != except_player:
-                player.health = player.health - self.damage
+                player.damage(self.damage)
 
     def activate(self, game, on_player):
         print("Laser, frate!")
@@ -43,3 +43,13 @@ class Laser(Powerup):
         for idx in range(GRID_HEIGHT):
             affected_pos = (idx, player_y)
             self._activate_in_square(affected_pos, game, on_player)
+
+
+class Shield(Powerup):
+    def __init__(self):
+        super().__init__("Shield")
+        self.turns = 3
+
+    def activate(self, game, on_player):
+        print("activate shield")
+        on_player.side_effects["shield"] = self.turns

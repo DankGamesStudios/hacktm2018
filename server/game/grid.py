@@ -9,6 +9,9 @@ class Placeholder(object):
     def __init__(self, name="empty", powerup=None):
         self.name = name
         self.powerup = powerup
+    
+    def __str__(self):
+        return "{}".format(self.name)
 
 EMPTY = Placeholder()
 
@@ -25,20 +28,6 @@ OPTIONS = [
     EMPTY,
 ]
 OPTION_SIZE = len(OPTIONS) - 1
-
-
-# class Square(object):
-#     """ Class to model a square in the Grid.
-#         This and Placeholder could be superfluous.""" 
-#     def __init__(self, placeholder=None):
-#         if placeholder is None:
-#             print("creating random square")
-#             option = random.randint(0, OPTION_SIZE)
-#             placeholder = OPTIONS[option]
-#         self.placeholder = placeholder
-
-#     def __str__(self):
-#         return u"[" + self.placeholder.name + u"]"
 
 
 class Grid(object):
