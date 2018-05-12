@@ -12,6 +12,7 @@ class Player(object):
         self.health = 100
         self.name = name
         self.position = list(position)
+        self.check_initial_position()
     
     def __str__(self):
         return "{name}[{health}] at ({x}, {y})".format(
@@ -20,6 +21,10 @@ class Player(object):
             x=self.position[0],
             y=self.position[1]
         )
+
+    def check_initial_position(self):
+        if self.position[0] > grid.GRID_HEIGHT or self.position[1] > grid.GRID_WIDTH:
+            raise IllegalMoveException("Player position outside grid range")
 
     def move(self, horizontal_pos, vertical_pos):
         if horizontal_pos in MOVE_LIMITS and vertical_pos in MOVE_LIMITS:
