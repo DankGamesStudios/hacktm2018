@@ -81,12 +81,13 @@ export default class Game extends Phaser.State {
         if (this.selectedTile) {
             this.selectedTile.loadTexture('normal_tile');
         }
-        console.log('selected tile changed', selectedTile);
+        // console.log('selected tile changed', selectedTile);
+        this.manager.selectTile(selectedTile.my_x, selectedTile.my_y);
         selectedTile.loadTexture('normal_tile_selected');
         this.selectedTile = selectedTile;
     }
 
-    createTile(x, y, type) {
+    createTile(x, y, logical_x, logical_y, type) {
         // console.log(type, Tile.LASER);
         let tile = this.game.add.sprite(x, y, 'normal_tile');
         let power = null;
@@ -98,6 +99,9 @@ export default class Game extends Phaser.State {
         if (power) {
             power.anchor.setTo(0.5, 0.5);
         }
+        tile.my_x = logical_x;
+        tile.my_y = logical_y;
+
         tile.anchor.setTo(0.5, 0.5);
         tile.inputEnabled = true;
         tile.input.useHandCursor = true;
@@ -120,7 +124,7 @@ export default class Game extends Phaser.State {
             for (let col = 0; col < this.nr_columns; col++) {
                 let x = this.padding_x + col * this.row_size + this.board_margin_x;
                 let y = this.padding_y + row * this.row_size + this.board_margin_y;
-                new_row.push(this.createTile(x, y, rowData[col]));
+                new_row.push(this.createTile(x, y, col, row, rowData[col]));
             }
             this.rows.push(new_row);
         }

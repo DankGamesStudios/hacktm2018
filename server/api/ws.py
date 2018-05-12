@@ -8,7 +8,7 @@ from collections import OrderedDict
 from .pubsub import Publisher, Subscriber
 
 
-PLAYER_COUNT = 2
+PLAYER_COUNT = 3
 bus = Publisher()
 
 
@@ -19,6 +19,7 @@ def uid():
 class Player:
     def __init__(self, p_id, name, game_player=None, state=None):
         self.p_id = p_id
+        self.index = None
         self.name = name
         self.game_player = game_player
         self.state = state
@@ -39,7 +40,8 @@ class Game:
         self.game_id = game_id
         self.players = {}
 
-    def add_player(self, player):
+    def add_player(self, player, index):
+        player.index = index
         self.players[player.p_id] = player
 
 
@@ -51,11 +53,20 @@ class GameServer:
         g_id = uid()
         game = Game(g_id)
         self.games[g_id] = game
-        for player in players:
-            game.add_player(player)
+        players_4_response = [
+            {'name': player.p_id[0:3], 'x': 3+index*3, 'y':3, 'health': 100}
+            for index, player in enumerate(players)
+        ]
+        for index, player in enumerate(players):
+            game.add_player(player, index);
             player.start_game(g_id)
             print("bus.send", player.p_id, {'action': 'START_GAME', 'g_id': game.game_id})
-            bus.send(player.p_id, {'action': 'START_GAME', 'g_id': game.game_id})
+            bus.send(player.p_id, {
+                'action': 'START_GAME',
+                'g_id': game.game_id,
+                'p_index': player.index,
+                'players': players_4_response,
+            })
         return game
 
 class Lobby:
@@ -72,6 +83,9 @@ class Lobby:
                 g_players = self.players[0:PLAYER_COUNT]
                 self.players = self.players[PLAYER_COUNT:]
                 return gs.new_game(g_players)
+            else:
+                for player in self.players:
+                    bus.send(player.p_id, {'action': 'WAITING', 'q_id':(len(self.players))})
 
 
 gs = GameServer()
@@ -85,13 +99,17 @@ class Application(WebSocketApplication):
 
     def on_KEEP_ALIVE(self, message):
         pass
+
+    def on_MOVE(self, message):
+        print(message)
         
     def on_CREATE_PLAYER_ID(self, message):
         name = message.get('name', 'nameless')
         self.player = Player.new(name=name)
         self.p_id = self.player.p_id
         game = lobby.add_player(self.player)
-        msg = {"status": "ok", "p_id":self.player.p_id, "q_id": len(lobby.players)}
+        msg = {
+            "action": "WAITING", "p_id":self.player.p_id, "q_id": len(lobby.players)}
         return msg
             
         
