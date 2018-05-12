@@ -57,6 +57,7 @@ class Grid(object):
             for _ in range(2)
         ]
         self.next_row = [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
+        self._deleted_rows = []
 
     def _get_a_placeholder(self):
         option = random.randint(0, OPTION_SIZE)
@@ -67,7 +68,7 @@ class Grid(object):
         """ row_generate adds a row at the start of the grid, like a queue,
             and removes the last row, keeping the same size."""
         print("generating next row ...")
-        self.squares.pop(GRID_HEIGHT - 1) # pop the last row
+        self._deleted_rows.append(self.squares.pop(GRID_HEIGHT - 1)) # pop the last row
         self.squares.insert(0, self.next_row)
         self.next_row = [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
 
