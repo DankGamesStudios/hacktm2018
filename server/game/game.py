@@ -36,13 +36,18 @@ class Game(object):
             self.players[player_id] = player.Player(name=name,
                                                     position=position,
                                                     player_id=player_id)
-    
-    def start(self, player_no=4):
+
+    def start(self):
         self.grid = grid.Grid()
         print("starting game:")
         self.grid.print_grid()
+
+    def add_default_players(self):
+        """ helper method to test stuff on backend.
+            we have to separate this from start() because rest api
+            needs to provide specific ids and names to players."""
         print("add players")
-        for index in range(player_no):
+        for index in range(4):
             player_id="{}".format(uuid.uuid4())
             self.add_player(player_id=player_id,
                             name=player_id,
@@ -56,6 +61,7 @@ class Game(object):
                 placeholder.powerup.activate(self, player)
                 placeholder = grid.EMPTY
             player.turn_effects()
+        self.resolve_conflicts()
 
     def resolve_conflicts(self):
         """ go through each player and resolve conflicts"""
@@ -64,9 +70,9 @@ class Game(object):
             if len(conflicts) > 1:
                 # we have a conflict
                 luck = [random.randint(0, 10) for player in conflicts]
-                winner = max(luck)
-                losers = luck.remove(winner)
-                self.kick_losers(losers)
+                winner = luck.index(max(luck))
+                conflicts.remove(conflicts[winner])
+                self.kick_losers(conflicts)
 
     def kick_losers(self, losers):
         """ they should move to a free adjacent cell/square.

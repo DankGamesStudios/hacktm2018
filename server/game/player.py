@@ -13,6 +13,9 @@ class Player(object):
         self.name = name
         self.my_id = player_id
         self.position = list(position)
+        # add all side effects here, like freezing, invisibility, shields, etc.
+        # with the remaining number of turns to be active
+        # 0 means effect is inactive
         self.side_effects = {
             "shield": 0
         }
@@ -52,7 +55,7 @@ class Player(object):
         """ damage is applied if the player has side_effects that allow it.
             i.e. a shield negates damage, a poison like effect
             can enhance damage"""
-        if(self.can_take_damage()):
+        if self.can_take_damage():
             # here we'll add if it's affected by negative buffs
             self.health -= dmg_value
 

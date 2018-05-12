@@ -29,3 +29,23 @@ def test_player():
     assert(test_obj.name == "testPlayer")
     assert(test_obj.health == 100)
     assert(test_obj.position == [0, 0])
+
+
+def test_conflicts():
+    g1 = game.Game()
+    g1.add_default_players()
+    g1.start()
+
+    # make two players collide
+    iterable = iter(g1.players.values())
+    first_player = next(iterable)
+    second_player = next(iterable)
+    first_player.position = [3, 3]
+    second_player.position = [3, 3]
+
+    # resolve conflict
+    g1.resolve_conflicts()
+    assert first_player.position != second_player.position
+    assert first_player.health != second_player.health
+
+
