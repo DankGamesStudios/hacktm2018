@@ -19,14 +19,15 @@ class Publisher(object):
         self.socket.bind(self.url)
 
     def send(self, p_id, msg):
-        topic = str(p_id).encode('utf8')
+        # assert isinstance(p_id, str)
+        topic = p_id.encode('utf8')
         print('bus_send', b"%s %s" % (topic, json.dumps(msg).encode('utf8')))
         self.socket.send(b"%s %s" % (topic, json.dumps(msg).encode('utf8')))
 
 
 class Subscriber(object):
     def __init__(self, topic, url=None, context=ctx):
-        topic = str(topic).encode('utf8')
+        topic = topic.encode('utf8')
         self.url = url or "inproc://spam"
         self.socket = context.socket(zmq.SUB)
         self.socket.connect(self.url)

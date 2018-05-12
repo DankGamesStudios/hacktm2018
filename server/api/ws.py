@@ -48,6 +48,12 @@ class Game:
     def move_player(self, player_id, new_x, new_y):
         player = self.players[player_id]
         print(self.game_id, player_id, new_x, new_y)
+        self.update_players()
+
+    def update_players(self):
+        state = {'foo': 'bar'}
+        for p_id in self.players:
+            bus.send(p_id, {'action': 'UPDATE', **state})
 
 
 class GameServer:
