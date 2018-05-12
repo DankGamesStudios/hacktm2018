@@ -66,7 +66,7 @@ export default class GameManager {
         // console.log("msg", message, action);
         switch(action){
         case "START_GAME":
-            console.log('starting');
+            console.log('starting', message);
             this.myIndex = message.p_index;
             this.playerId = message.p_id;
             this.gameId = message.g_id;

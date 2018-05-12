@@ -39,10 +39,15 @@ class Game:
     def __init__(self, game_id):
         self.game_id = game_id
         self.players = {}
+        self.lock = RLock()
 
     def add_player(self, player, index):
         player.index = index
         self.players[player.p_id] = player
+
+    def move_player(self, player_id, new_x, new_y):
+        player = self.players[player_id]
+        print(self.game_id, player_id, new_x, new_y)
 
 
 class GameServer:
@@ -64,10 +69,25 @@ class GameServer:
             bus.send(player.p_id, {
                 'action': 'START_GAME',
                 'g_id': game.game_id,
+                'p_id': player.p_id,
                 'p_index': player.index,
                 'players': players_4_response,
             })
         return game
+
+    def handle_message(self, message):
+        g_id = message.get('g_id')
+        game = self.games.get(g_id)
+        if g_id is None or game is None:
+            return {'status': 'error', 'reason': 'No such game.'}
+        action = message.get('action')
+        if action == 'MOVE':
+            p_id = message['p_id']
+            x, y = message['x'], message['y']
+            return game.move_player(p_id, x, y)
+        else:
+            return {'status': 'error', 'reason': 'bad action'}
+
 
 class Lobby:
     def __init__(self):
@@ -101,7 +121,7 @@ class Application(WebSocketApplication):
         pass
 
     def on_MOVE(self, message):
-        print(message)
+        return gs.handle_message(message)
         
     def on_CREATE_PLAYER_ID(self, message):
         name = message.get('name', 'nameless')
@@ -109,7 +129,10 @@ class Application(WebSocketApplication):
         self.p_id = self.player.p_id
         game = lobby.add_player(self.player)
         msg = {
-            "action": "WAITING", "p_id":self.player.p_id, "q_id": len(lobby.players)}
+            "action": "WAITING",
+            "p_id":self.player.p_id,
+            "q_id": len(lobby.players),
+        }
         return msg
             
         
