@@ -2,6 +2,8 @@ import PIXI from 'expose-loader?PIXI!phaser-ce/build/custom/pixi.js';
 import p2 from 'expose-loader?p2!phaser-ce/build/custom/p2.js';
 import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js';
 
+import VisualTimer from '../components/timer';
+
 // Phaser x low->high === left->right
 // Phaser y low->high === top->down
 
@@ -9,8 +11,8 @@ export default class Game extends Phaser.State {
 
     constructor() {
         super();
-        this.board_margin_x = 70;
-        this.board_margin_y = 70;
+        this.board_margin_x = 100;
+        this.board_margin_y = 170;
         this.padding_x = 20;
         this.padding_y = 20;
         this.tile_size = 60;
@@ -25,7 +27,8 @@ export default class Game extends Phaser.State {
         //Each row Left (0) -> Right (max-1)
         this.nr_rows = 5;
         this.nr_columns = 12;
-        this.players = {}
+        this.players = {};
+        this.timer = null;
     }
 
     getSelectedVersion(currentVersion) {
@@ -82,6 +85,13 @@ export default class Game extends Phaser.State {
         }
         this.setNewRowState({});
         this.addPlayer('Player1', 4, 3);
+        this.timer = new VisualTimer({
+            game: this.game,
+            x: 120,
+            y: 30,
+            seconds: 10,
+            onComplete: function () {console.log('timer completed')}
+        });
         console.log('Game state');
     };
 
@@ -90,6 +100,8 @@ export default class Game extends Phaser.State {
         this.move_rows = true;
         window.setTimeout(() => {
             this.setNewRowState({});
+            this.timer.reset();
+            this.timer.start();
         }, 5000);
     }
 
@@ -111,11 +123,24 @@ export default class Game extends Phaser.State {
         // console.log('adding new row', this.rows);
     }
 
+    setDirection(player, destination) {
+        if (player.x > destination.x) {
+            player.scale.x = 1;
+        } else {
+            player.scale.x = -1;
+        }
+        // if (player.y > destination.y) {
+        //     player.angle = 30;
+        // } else {
+        //     player.angle = -30;
+        // }
+    }
+
     updatePlayers() {
         let player1 = this.players['Player1'];
         player1.sprite.bringToTop();
         if (this.selectedTile) {
-            player1.sprite.angle += 30;
+            player1.sprite.angle = this.setDirection(player1.sprite, this.selectedTile);
             let newLocation = {x: this.selectedTile.x, y: this.selectedTile.y + this.row_size};
             player1.sprite.animations.play('run', 15, true);
             // this.game.add.tween(player1.sprite).to(newLocation, 200, 'Bounce', true);
