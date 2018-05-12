@@ -33,7 +33,7 @@ import Game from './states/game';
 // }
 
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO);
+var game = new Phaser.Game(1400, 1000, Phaser.AUTO);
 game.state.add('Boot', Boot);
 // game.state.add('Preloader', Preload);
 game.state.add('Menu', Menu);
