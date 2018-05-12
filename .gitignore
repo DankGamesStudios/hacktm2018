@@ -6,3 +6,6 @@ client/dist/*
 # Server
 .pytest_cache
 __pycache__
+
+.cache/
+.idea/
