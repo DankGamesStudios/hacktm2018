@@ -39,15 +39,14 @@ class Player(object):
         self.health = 100
         self.name = name
         self.position = position
-
-
-def print_row(row):
-    """ helper function to print a row, to figure out in command line
-        if the algorithms are maybe working."""
-    line = u""
-    for square in row:
-        line += str(square)
-    print(line)
+    
+    def __str__(self):
+        return "{name}[{health}] at ({x}, {y})".format(
+            name=self.name,
+            health=self.health,
+            x=self.position[0],
+            y=self.position[0]
+        )
 
 
 class Grid(object):
@@ -78,10 +77,10 @@ class Grid(object):
 
     def print_grid(self):
         print("next squares:")
-        print_row(self.next_row)
+        print("".join([str(elem) for elem in self.next_row]))
         print("playable squares")
         for row in self.squares:
-            print_row(row)
+            print("".join([str(elem) for elem in row]))
 
 
 class Square(object):
@@ -103,3 +102,20 @@ class Powerup(Placeholder):
         I actually expect this to be extended by various other powerups."""
     def __init__(self, name):
         super().__init__(name)
+
+
+class Game(object):
+    """ Class to model the game business logic.
+        It should be able to start/stop, add players, request moves, etc.
+    """
+    def __init__(self):
+        pass # dunno what to do here yet
+    
+    def start(self):
+        self.grid = Grid()
+        print("starting game:")
+        self.grid.print_grid()
+        print("add players")
+        self.players = {
+            "player one": Player("player one", (0, 0))
+        }

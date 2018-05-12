@@ -1,8 +1,14 @@
 # hacktm2018
 
 ### To start client
-<code>
-cd client<br>
-npm install<br>
+```
+cd client
+```
+
+```
+npm install
+```
+
+```
 npm run-script server:dev
-<code>
+```
