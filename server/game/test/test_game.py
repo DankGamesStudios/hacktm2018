@@ -6,13 +6,6 @@ import game.grid as grid
 import game.player as player
 
 
-def test_square():
-    test_obj = powerups.Square()
-    assert test_obj.placeholder is not None
-    assert test_obj.placeholder.name is not None
-    assert test_obj.placeholder in powerups.OPTIONS
-
-
 def test_game():
     test_obj = game.Game()
     # before starting the game, there's no grid nor players
@@ -31,7 +24,7 @@ def test_grid():
 
 
 def test_player():
-    test_obj = player.Player("testPlayer", (0, 0))
+    test_obj = player.Player("testPlayer", [0, 0])
     assert(test_obj.name == "testPlayer")
     assert(test_obj.health == 100)
-    assert(test_obj.position == (0, 0))
+    assert(test_obj.position == [0, 0])
