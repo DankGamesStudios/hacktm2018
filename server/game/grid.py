@@ -1,4 +1,4 @@
-from .powerups import Square, EMPTY
+from powerups import Square, EMPTY
 
 GRID_HEIGHT = 5
 GRID_WIDTH  = 15
