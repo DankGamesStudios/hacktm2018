@@ -51,7 +51,8 @@ export default class Game extends Phaser.State {
         let tile = this.rows[yTile][xTile];
         let sprite = this.game.add.sprite(tile.x, tile.y, key);
         sprite.anchor.setTo(0.5, 0.5);
-        sprite.animations.add('run');
+        sprite.animations.add('jump', ['male_jump'], 1, false);
+        sprite.animations.add('walk', ['male_walk1','male_walk2'], 2, true);
         let nameSprite = this.game.add.text(
             this.player_start_x + this.nr_players * this.player_spacing_x,
             this.player_start_y,
@@ -149,9 +150,9 @@ export default class Game extends Phaser.State {
 
     setDirection(player, destination) {
         if (player.x > destination.x) {
-            player.scale.x = 1;
-        } else {
             player.scale.x = -1;
+        } else {
+            player.scale.x = 1;
         }
         // if (player.y > destination.y) {
         //     player.angle = 30;
@@ -166,15 +167,12 @@ export default class Game extends Phaser.State {
         if (this.selectedTile) {
             player1.sprite.angle = this.setDirection(player1.sprite, this.selectedTile);
             let newLocation = {x: this.selectedTile.x, y: this.selectedTile.y + this.row_size};
-            player1.sprite.animations.play('run', 15, true);
-            // this.game.add.tween(player1.sprite).to(newLocation, 200, 'Bounce', true);
-            let animationTime = 1000;
-            this.game.add.tween(player1.sprite).to(newLocation, animationTime, Phaser.Easing.Bounce.Out, true, 0);
-            //TODO find other way to cancel animation
-            window.setTimeout(() => {
-                    player1.sprite.animations.stop(true);
-                },
-                animationTime);
+            player1.sprite.animations.play('jump', 1, false);
+            this.game.add.tween(player1.sprite).to(newLocation, 1000, Phaser.Easing.Bounce.Out, true, 0);
+            this.game.time.events.add(1000, walkAgain, this);
+            function walkAgain() {player1.sprite.animations.play('walk', 2, true)}
+        } else {
+            player1.sprite.animations.play('walk', 2, true);
         }
     }
 
