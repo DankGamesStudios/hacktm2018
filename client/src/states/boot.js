@@ -14,6 +14,9 @@ export default class Boot extends Phaser.State {
             require('../../assets/sprites/running_bot.png'),
             require('../../assets/sprites/running_bot.json')
         );
+
+        this.game.load.spritesheet('timer', require('../../assets/images/timer.png'), 150, 20);
+
     }
 
     create(game) {
