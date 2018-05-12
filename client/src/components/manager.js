@@ -3,20 +3,19 @@ import io from 'socket.io-client';
 export default class GameManager {
 
     constructor() {
-        this.socket = io('http://10.10.2.16:8000');
-        this.socket.on('connect', function () {
-            console.log('connection made')
+        var s = new WebSocket('ws://10.10.2.16:8000/');
+        s.addEventListener('error', function (m) {
+            log("error");
         });
-        this.socket.on('connect_failed', function () {
-            console.log('connection failed');
+        s.addEventListener('open', function (m) {
+            console.log("websocket connection open");
+            s.send(JSON.stringify({
+                action: "CREATE_PLAYER_ID"
+            }));
         });
-        this.socket.on('event', function (data) {
-            console.log('event')
+        s.addEventListener('message', function (m) {
+            console.log(m.data);
         });
-        this.socket.on('disconnect', function () {
-            console.log('disconnect');
-        });
-
         this.availablePlayers = 1;
     }
 
