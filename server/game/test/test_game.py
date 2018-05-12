@@ -7,10 +7,11 @@ import game.player as player
 
 
 def test_game():
+    import pdb; pdb.set_trace()
     test_obj = game.Game()
     # before starting the game, there's no grid nor players
     assert not hasattr(test_obj, 'grid')
-    assert not hasattr(test_obj, 'players')
+    assert len(test_obj.players) == 0
     test_obj.start()
     # after starting the game, we have grid and players
     assert hasattr(test_obj, 'grid')

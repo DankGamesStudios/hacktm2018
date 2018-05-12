@@ -1,14 +1,12 @@
 
-# GRID_HEIGHT = 5
-# GRID_WIDTH  = 15
-from .grid import GRID_HEIGHT, GRID_WIDTH, Placeholder
+from .options import GRID_HEIGHT, GRID_WIDTH
 
 
-class Powerup(Placeholder):
-    """ Class to model a Powerup in the Square.
+class Powerup(object):
+    """ Class to model a Powerup in the Placeholder.
         I actually expect this to be extended by various other powerups."""
     def __init__(self, name):
-        super().__init__(name)
+        self.name = name
 
     def activate(self, game, on_player, *args, **kwargs):
         pass # to be extended

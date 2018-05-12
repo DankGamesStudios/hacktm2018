@@ -1,20 +1,20 @@
 import random
-
-GRID_HEIGHT = 5
-GRID_WIDTH  = 15
+from game.powerups import Laser
+from game.options import GRID_HEIGHT, GRID_WIDTH
 
 
 class Placeholder(object):
     """ Class to model a Square-like thing on the grid.
         It will be extended in the Powerups."""
-    def __init__(self, name="empty"):
+    def __init__(self, name="empty", powerup=None):
         self.name = name
+        self.powerup = powerup
 
 EMPTY = Placeholder()
 
 OPTIONS = [
-    Placeholder('flash'),
-    Placeholder('boom'),
+    Placeholder('laser', Laser()),
+    Placeholder('land-mine'),
     Placeholder('glasses'),
     Placeholder('sound'),
     Placeholder('radioactive'),

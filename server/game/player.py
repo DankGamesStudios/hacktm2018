@@ -1,18 +1,19 @@
 """ Module for player logic. This could include the AI as well. """
 from .exceptions import IllegalMoveException
-from .grid import GRID_HEIGHT, GRID_WIDTH
+from .options import GRID_HEIGHT, GRID_WIDTH
 
 MOVE_LIMITS = range(-3, 3)
 
 class Player(object):
     """ Class to model business logic of player.
         It can/will interact with the Grid and other Players."""
-    def __init__(self, name, position):
+    def __init__(self, name, position, player_id=""):
         print("creating player")
         self.health = 100
         self.name = name
         self.position = list(position)
         self.valid_position()
+        self.my_id = player_id
     
     def __str__(self):
         return "{name}[{health}] at ({x}, {y})".format(
