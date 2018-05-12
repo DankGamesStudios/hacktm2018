@@ -36,4 +36,10 @@ class Game(object):
             player_id="{}".format(uuid.uuid4())
             self.add_player(player_id=player_id,
                             name=player_id,
-                            position= [2, 2 + 4 * index]) 
+                            position=[2, 2 + 4 * index])
+
+    def activate_powerup(self):
+        for player in self.players.values():
+            placeholder = grid[player.position[0]][player.position[1]]
+            if placeholder.powerup:
+                placeholder.powerup.activate(self, player)
