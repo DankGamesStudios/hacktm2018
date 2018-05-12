@@ -7,8 +7,12 @@ import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js'
 export default class Boot extends Phaser.State {
 
     preload(game) {
-        this.game.load.image('plus', require('../../assets/images/platform-1.png'));
-        this.game.load.image('minus', require('../../assets/images/platform-2.png'));
+        this.game.load.image('normal_tile', require('../../assets/images/platform-1.png'));
+        this.game.load.image('normal_tile_selected', require('../../assets/images/platform-2.png'));
+        this.game.load.image('normal_tile_available', require('../../assets/images/platform-2.png'));
+
+        this.game.load.image('laser', require('../../assets/images/swordSilver.png'));
+        this.game.load.image('shield', require('../../assets/images/shieldBronze.png'));
 
         this.game.load.atlasJSONHash('player',
             require('../../assets/sprites/character.png'),

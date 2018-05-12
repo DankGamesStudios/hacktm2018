@@ -15,12 +15,12 @@ export default class Boot extends Phaser.State {
     create(game) {
         console.log('Menu state');
         this.statusText = this.game.add.text(
-            500, 400,
+            this.game.world.centerX, 400,
             'Players connected: 0',
             {font: '50px', fill: '#9eff63', align: 'center'});
         this.statusText.anchor.set(0.5, 0.5);
         this.playText = this.game.add.text(
-            500, 600,
+            this.game.world.centerX, 600,
             'Play',
             {font: '50px', fill: '#9eff63', align: 'center'});
         this.playText.anchor.set(0.5, 0.5);
