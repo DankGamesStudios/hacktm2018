@@ -4,19 +4,33 @@ import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js'
 
 export default class Boot extends Phaser.State {
 
-    preload() {
-        // this.game.load.image('logo', '../../assets/images/phaser.png');
+    constructor(game, gameManager) {
+        super(game);
+        this.gameManager = gameManager;
     }
 
-    create() {
-        // var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'logo');
-        // logo.anchor.setTo(0.5, 0.5);
+    preload(game) {
+    }
+
+    create(game) {
         console.log('Menu state');
-        this.game.state.start('Game');
+        this.statusText = this.game.add.text(
+            500, 400,
+            'Players connected: 0',
+            {font: '50px', fill: '#9eff63', align: 'center'});
+        this.statusText.anchor.set(0.5, 0.5);
+        this.playText = this.game.add.text(
+            500, 600,
+            'Play',
+            {font: '50px', fill: '#9eff63', align: 'center'});
+        this.playText.anchor.set(0.5, 0.5);
+        this.playText.inputEnabled = true;
+        this.playText.events.onInputDown.add(() => {
+            this.game.state.start('Game');
+    }, this);
     };
 
-    update() {
-        // ¯ \_(ツ)_/¯
-        // "surprise me"
+    update(game) {
+        this.statusText.text = 'Players connected: ' + this.gameManager.getAvailablePlayers();
     };
 };
