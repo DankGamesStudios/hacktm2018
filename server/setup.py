@@ -7,7 +7,7 @@ setup(
     platforms='any',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[],
+    install_requires=["pytest==3.5.1",],
     author="Artists formerly known as spam",
     author_email="radu@devrandom.ro",
     description="",

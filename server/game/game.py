@@ -88,8 +88,8 @@ class Square(object):
     """ Class to model a square in the Grid.
         This and Placeholder could be superfluous.""" 
     def __init__(self, placeholder=None):
-        print("creating square")
         if placeholder is None:
+            print("creating random square")
             option = random.randint(0, OPTION_SIZE)
             placeholder = OPTIONS[option]
         self.placeholder = placeholder
