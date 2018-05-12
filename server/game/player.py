@@ -1,6 +1,6 @@
 """ Module for player logic. This could include the AI as well. """
 from exceptions import IllegalMoveException
-import grid
+from grid import GRID_HEIGHT, GRID_WIDTH
 
 MOVE_LIMITS = range(-2, 2)
 
@@ -23,12 +23,12 @@ class Player(object):
         )
 
     def check_initial_position(self):
-        if self.position[0] > grid.GRID_HEIGHT or self.position[1] > grid.GRID_WIDTH:
+        if self.position[0] > GRID_HEIGHT or self.position[1] > GRID_WIDTH:
             raise IllegalMoveException("Player position outside grid range")
 
     def move(self, horizontal_pos, vertical_pos):
         if horizontal_pos in MOVE_LIMITS and vertical_pos in MOVE_LIMITS:
-            if self.position[0] < grid.GRID_HEIGHT and self.position[1] < grid.GRID_WIDTH:
+            if self.position[0] < GRID_HEIGHT and self.position[1] < GRID_WIDTH:
                 self.position[0] += horizontal_pos
                 self.position[1] += vertical_pos
             else:
