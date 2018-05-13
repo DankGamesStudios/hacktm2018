@@ -4,6 +4,8 @@ import json
 
 from geventwebsocket import WebSocketServer, WebSocketApplication, Resource
 from collections import OrderedDict
+from game import game as awesome_sauce
+from game.names import get_name
 
 from .pubsub import Publisher, Subscriber
 
@@ -33,15 +35,31 @@ class Player:
         p_id = uid()
         return cls(p_id, name, state='lobby', **kwa)
 
+    @property
+    def x(self):
+        return self.game_player.position[0]
+
+    @property
+    def y(self):
+        return self.game_player.position[1]
+
+    @property
+    def health(self):
+        return self.game_player.health
+
 
 class Game:
     def __init__(self, game_id):
         self.game_id = game_id
         self.players = {}
         self.lock = RLock()
+        self.game = awesome_sauce.Game(game_id)
+        self.game.start()
 
     def add_player(self, player, index):
         player.index = index
+        game_player = self.game.add_player(player.p_id, name=player.name, position=[3, 2+index * 2])
+        player.game_player = game_player
         self.players[player.p_id] = player
 
     def move_player(self, player_id, new_x, new_y):
@@ -72,13 +90,16 @@ class GameServer:
         g_id = uid()
         game = Game(g_id)
         self.games[g_id] = game
-        players_4_response = [
-            {'name': player.p_id[0:3], 'x': 3 + index * 3, 'y': 3, 'health': 100}
-            for index, player in enumerate(players)
-        ]
         for index, player in enumerate(players):
             game.add_player(player, index);
             player.start_game(g_id)
+
+        players_4_response = [
+            {'name': player.name, 'x': player.x, 'y': player.y, 'health': player.health}
+            for player in players
+        ]
+
+        for player in players:
             print("bus.send", player.p_id, {'action': 'START_GAME', 'g_id': game.game_id})
             bus.send(player.p_id, {
                 'action': 'START_GAME',
@@ -138,7 +159,7 @@ class Application(WebSocketApplication):
         return gs.handle_message(message)
 
     def on_CREATE_PLAYER_ID(self, message):
-        name = message.get('name', 'nameless')
+        name = message.get('name', get_name())
         self.player = Player.new(name=name)
         self.p_id = self.player.p_id
         game = lobby.add_player(self.player)

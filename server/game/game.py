@@ -33,9 +33,12 @@ class Game(object):
 
     def add_player(self, player_id=uuid.uuid4(), name="Player", position=[0, 0]):
         if not self._is_position_busy(position) or not player_id in self.players.keys():
-            self.players[player_id] = player.Player(name=name,
-                                                    position=position,
-                                                    player_id=player_id)
+            new_player = player.Player(name=name,
+                                       position=position,
+                                       player_id=player_id)
+            self.players[player_id] = new_player
+            return new_player
+        raise AssertionError("position conflict in add player")
 
     def start(self):
         """ each story has a beginning."""
