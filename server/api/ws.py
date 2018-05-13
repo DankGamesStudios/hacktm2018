@@ -55,6 +55,7 @@ class Game:
         self.lock = RLock()
         self.game = awesome_sauce.Game(game_id)
         self.game.start()
+        self.moved = set([])
 
     def add_player(self, player, index):
         player.index = index
@@ -64,8 +65,16 @@ class Game:
 
     def move_player(self, player_id, new_x, new_y):
         player = self.players[player_id]
+        with self.lock:
+            self.game.move_player(player_id, new_x, new_y)
+            self.moved.add(player_id)
+            if len(self.moved) == PLAYER_COUNT:
+                self.game.make_a_turn()
+                self.moved = set([])
+                self.update_players()
+
         print(self.game_id, player_id, new_x, new_y)
-        self.update_players()
+        # self.update_players()
 
     def update_players(self):
         state = self.game.serialize()

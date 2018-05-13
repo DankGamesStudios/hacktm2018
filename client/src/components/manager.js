@@ -2,9 +2,9 @@ const CREATE_PLAYER_ID = 'CREATE_PLAYER_ID';
 const Action = {
     CREATE_PLAYER_ID,
 };
-const NONE = 'Empty';
-const LASER = 'Laser';
-const SHIELD = 'Shield';
+const NONE = 'empty';
+const LASER = 'laser';
+const SHIELD = 'shield';
 
 export const Tile = {
     NONE,
@@ -72,6 +72,9 @@ export default class GameManager {
                 this.playerId = message.p_id;
                 this.gameId = message.g_id;
                 this.players = {};
+                for (let i = 0; i < message.grid.length; i++) {
+                    this.rows[5 - i] = message.grid[i];
+                }
                 break;
             case "WAITING":
                 this.availablePlayers = message.q_id;
