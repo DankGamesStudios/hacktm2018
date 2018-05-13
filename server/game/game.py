@@ -17,6 +17,7 @@ class Game(object):
     def __init__(self, game_id="{}".format(uuid.uuid4())):
         self.game_id = game_id
         self.players = {}
+        self.animations = []
 
     def _is_position_busy(self, position):
         for player in self.players.values():
@@ -51,6 +52,7 @@ class Game(object):
         print("stopping game")
         self.players = {}
         self.grid = None
+        self.animations = []
     
     def serialize(self):
         """ return the data, so it can be displayed in phaser."""
@@ -62,13 +64,15 @@ class Game(object):
                     "p_id": playerx.player_id,
                     "x": playerx.position[0],
                     "y": playerx.position[1],
-                    "health": playerx.health
+                    "health": playerx.health,
+                    "name": playerx.name
                 } for playerx in self.players.values()
             },
             "nextRow": [
                 item.name for item in self.grid.next_row
             ],
             "winner": None,
+            "animations": self.animations
         }
         if len(alive_players) == 1:
             data['winner'] = alive_players[0].player_id
@@ -116,6 +120,7 @@ class Game(object):
 
     def make_a_turn(self):
         """ maybe this is needed?"""
+        self.animations = []
         self.grid.row_generate()
         self.resolve_conflicts()
         self.activate_powerup()
@@ -140,6 +145,13 @@ class Game(object):
                 luck = [random.randint(0, 10) for player in conflicts]
                 winner = luck.index(max(luck))
                 conflicts.remove(conflicts[winner])
+                self.animations.append({
+                    "power": "fight",
+                    "positions": [{
+                        "pos": player.position,
+                        "player_id": player.player_id
+                    }],
+                })
                 self._kick_losers(conflicts)
 
     def _kick_losers(self, losers):
