@@ -36,8 +36,8 @@ export default class Game extends Phaser.State {
         this.nr_columns = 15;
         this.players = {};
         this.timer = null;
-        this.lastRenderedRow = 0;
         this.playerScale = 0.6;
+        this.lastRenderedRow = 0;
     }
 
     preload(game) {
@@ -146,7 +146,7 @@ export default class Game extends Phaser.State {
         this.rows = [];
         for (let row = 0; row < this.nr_rows; row++) {
             let new_row = [];
-            let rowData = this.manager.rows[this.manager.lastRow - row];
+            let rowData = this.manager.rows[this.manager.lastRow - row - 1];
             // console.log(rowData);
             for (let col = 0; col < this.nr_columns; col++) {
                 let x = this.padding_x + col * this.row_size + this.board_margin_x;
