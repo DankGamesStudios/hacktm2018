@@ -1,0 +1,28 @@
+{"frames": {
+
+"anvil_0":
+{
+	"frame": {"x":1,"y":1,"w":462,"h":338},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":462,"h":338},
+	"sourceSize": {"w":462,"h":338}
+},
+"anvil_1":
+{
+	"frame": {"x":1,"y":341,"w":462,"h":382},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":462,"h":382},
+	"sourceSize": {"w":462,"h":382}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "character.png",
+	"format": "RGBA8888",
+	"size": {"w":464,"h":724},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:98277ff2b893f6e167b88e8b51a06796:434fd260414dd656ba0a8f2273cd7d27:42e475aa4a03af306bdc7acb5ff91d19$"
+}
+}

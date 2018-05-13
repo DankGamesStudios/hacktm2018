@@ -1,4 +1,10 @@
 import random
 
+from .name_choices import NAMES, ADJECTIVES
+
+
 def get_name():
-    return "p{}".format(random.randint(1, 1001))
+    name = random.choice(NAMES)
+    adjective = random.choice(ADJECTIVES)
+    nb = random.randint(100, 999)
+    return '{} {}-{}'.format(adjective, name, nb)
