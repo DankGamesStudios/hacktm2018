@@ -62,6 +62,14 @@ class Bomb(Powerup):
         self.M_damage = 15
         self.S_damage = 5
 
+    def _activate_in_square(self, position, game, except_player, damage):
+        affected_players = player_at_position(game, position)
+        for player in affected_players:
+            # we must take into account that player could have a shield
+            # or negative effects, that could alter or negate this damage
+            if player != except_player:
+                player.damage(damage)
+
     def activate(self, game, on_player):
 
         def get_neighbours(position, distance_to_neighbour):
@@ -80,3 +88,10 @@ class Bomb(Powerup):
         XL_damage_pos = get_neighbours(on_player.position, 1)
         M_damage_pos = get_neighbours(on_player.position, 2)
         S_damage_pos = get_neighbours(on_player.position, 3)
+
+        for position in XL_damage_pos:
+            self._activate_in_square(position, game, on_player, self.XL_damage)
+        for position in M_damage_pos:
+            self._activate_in_square(position, game, on_player, self.M_damage)
+        for position in S_damage_pos:
+            self._activate_in_square(position, game, on_player, self.S_damage)
