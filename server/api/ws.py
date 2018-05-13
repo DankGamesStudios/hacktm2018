@@ -68,16 +68,7 @@ class Game:
         self.update_players()
 
     def update_players(self):
-        state = {
-            'nextRow': ['Empty', 'Shield', 'Laser'] * 5
-        }
-        state['players'] = {
-            p_id: {
-                'x': 1,
-                'y': 2,
-                'health': 90
-            } for p_id, player in self.players.items()
-        }
+        state = self.game.serialize()
         for p_id in self.players:
             bus.send(p_id, {'action': 'UPDATE', **state})
 
@@ -106,7 +97,7 @@ class GameServer:
                 'g_id': game.game_id,
                 'p_id': player.p_id,
                 'p_index': player.index,
-                'players': players_4_response,
+                'grid': game.game.serialize_grid(),
             })
         return game
 
