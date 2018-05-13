@@ -77,8 +77,12 @@ export default class GameManager {
                 this.availablePlayers = message.q_id;
                 break;
             case "UPDATE":
+                console.log('UPDATE', message);
                 this.lastRow ++;
                 this.rows[this.lastRow] = message.nextRow;
+                for(let playerIndex in this.players) {
+                    // this.players[playerIndex] = message.players[this.playerId];
+                }
                 break;
             default:
                 console.log("unknow msg", message);
