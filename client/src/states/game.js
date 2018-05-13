@@ -179,7 +179,7 @@ export default class Game extends Phaser.State {
             {font: '30px', fill: '#9eff63', align: 'center'});
         this.roundText = this.game.add.text(
             600,
-            100,
+            44,
             'Round 0',
             {font: '30px', fill: '#9eff63', align: 'center'});
         console.log('Game state');
