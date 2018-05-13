@@ -42,10 +42,10 @@ class Grid(object):
         print("creating grid")
         self.squares = [
             [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
-            for _ in range(GRID_HEIGHT - 2)
+            for _ in range(GRID_HEIGHT - 4)
         ] + [
             [EMPTY for _ in range(GRID_WIDTH)]
-            for _ in range(2)
+            for _ in range(4)
         ]
         self.next_row = [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
         self._deleted_rows = []

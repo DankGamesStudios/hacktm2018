@@ -245,8 +245,7 @@ export default class Game extends Phaser.State {
             player.sprite.bringToTop();
             player.sprite.angle = this.setDirection(player.sprite, target.tile);
             if (target.power) {
-                
-                target.power.scale.setTo(3, 3);
+                target.power.scale.setTo(3 * target.tile.original_scale, 3 * target.tile.original_scale);
                 target.power.angle = 30;
                 this.game.add.tween(target.power).to({y: '+30'}, 500, 'Bounce', true);
                 this.game.time.events.add(600, () => {
@@ -263,7 +262,6 @@ export default class Game extends Phaser.State {
             }, 1000, Phaser.Easing.Quadratic.Out, true).interpolation(function (v, k) {
                 return Phaser.Math.bezierInterpolation(v, k);
             });
-
             this.game.time.events.add(1000, walkAgain, this);
 
             function walkAgain() {
