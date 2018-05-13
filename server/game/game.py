@@ -53,10 +53,11 @@ class Game(object):
         self.grid = None
     
     def serialize(self):
-        """ return a json with the data, so it can be displayed in phaser."""
+        """ return the data, so it can be displayed in phaser."""
         data = {
             "players": {
                 playerx.player_id: {
+                    "p_id": playerx.player_id,
                     "x": playerx.position[0],
                     "y": playerx.position[1],
                     "health": playerx.health
@@ -67,6 +68,12 @@ class Game(object):
             ]
         }
         return data
+
+    def serialize_grid(self):
+        return [
+            [square.name for square in row]
+            for row in self.grid.squares
+        ]
 
     def add_default_players(self):
         """ helper method to test stuff on backend.
