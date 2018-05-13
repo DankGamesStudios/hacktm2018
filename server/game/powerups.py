@@ -38,6 +38,7 @@ class Laser(Powerup):
                     "pos": player.position,
                     "player_id": player.player_id
                 })
+        return positions
 
     def activate(self, game, on_player):
         print("Laser, frate!")
@@ -95,6 +96,7 @@ class Bomb(Powerup):
                     "pos": player.position,
                     "player_id": player.player_id
                 })
+        return positions
 
     def activate(self, game, on_player):
 
