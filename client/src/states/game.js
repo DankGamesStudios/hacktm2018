@@ -50,6 +50,7 @@ export default class Game extends Phaser.State {
         // TODO: replace with actual player name
         let tile = this.rows[xTile][yTile].tile;
         let sprite = this.game.add.sprite(tile.x, tile.y, key);
+        sprite.playerId = id;
         sprite.anchor.setTo(0.5, 0.5);
         sprite.scale.setTo(this.playerScale, this.playerScale);
         sprite.animations.add('jump', [animationPrefix + '_jump'], 1, false);
@@ -59,7 +60,11 @@ export default class Game extends Phaser.State {
         let color = '#9eff63';
         if (this.manager.playerId === id) {
             color = '#00ddcc';
+            sprite.scale.setTo(this.playerScale*1.5, this.playerScale*1.5);
         }
+        // else {
+        //     sprite.alpha = 75;
+        // }
 
         let nameSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
@@ -211,10 +216,15 @@ export default class Game extends Phaser.State {
     }
 
     setDirection(player, destination) {
+        var scale = this.playerScale;
+        console.log(player);
+        if(player.playerId == this.manager.playerId){
+            scale = scale * 1.7;
+        }
         if (player.x > destination.x) {
-            player.scale.x = -this.playerScale;
+            player.scale.x = -scale;
         } else {
-            player.scale.x = this.playerScale;
+            player.scale.x = scale;
         }
         // if (player.y > destination.y) {
         //     player.angle = 30;

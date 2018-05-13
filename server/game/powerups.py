@@ -56,7 +56,8 @@ class Laser(Powerup):
                 positions.append(affected)
         game.animations.append({
             "power": "laser",
-            "positions": positions
+            "positions": positions,
+            "origin": [player_x, player_y],
         })
 
 
@@ -133,7 +134,8 @@ class Bomb(Powerup):
 
         game.animations.append({
             "power": "bomb",
-            "positions": positions
+            "positions": positions,
+            "origin": on_player.position,
         })
 
 class Hammer(Powerup):
@@ -153,4 +155,5 @@ class Hammer(Powerup):
                 "pos": game.players[random_victim].position,
                 "player_id": game.players[random_victim].player_id
             }],
+            "origin": on_player.position,
         })
