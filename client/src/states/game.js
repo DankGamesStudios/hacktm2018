@@ -22,6 +22,7 @@ export default class Game extends Phaser.State {
         this.row_size = 100;
         this.selectedTile = null;
         this.roundText = null;
+        this.timerText = null;
         //TODO: use arrow functions, but webpack/babel did not cooperate
         this.selectNextTile = this.selectNextTile.bind(this);
 
@@ -164,13 +165,18 @@ export default class Game extends Phaser.State {
         }
         this.timer = new VisualTimer({
             game: this.game,
-            x: 120,
-            y: 30,
+            x: 80,
+            y: 50,
             seconds: 30,
             onComplete: function () {
                 console.log('timer completed')
             }
         });
+        this.timerText = this.game.add.text(
+            80, 
+            10,
+            'Timer',
+            {font: '30px', fill: '#9eff63', align: 'center'});
         this.roundText = this.game.add.text(
             600,
             100,
