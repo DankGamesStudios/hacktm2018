@@ -1,9 +1,7 @@
 """ Module for player logic. This could include the AI as well. """
-import random
 
 from .exceptions import IllegalMoveException
 from .options import GRID_HEIGHT, GRID_WIDTH
-from .name_choices import NAMES, ADJECTIVES
 
 MOVE_LIMITS = range(-3, 3)
 
