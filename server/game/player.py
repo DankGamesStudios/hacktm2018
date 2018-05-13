@@ -40,6 +40,7 @@ class Player(object):
 
     def move(self, horizontal_pos, vertical_pos):
         """ change player position by a horizontal and vertical delta."""
+        print(horizontal_pos, vertical_pos, MOVE_LIMITS)
         if horizontal_pos in MOVE_LIMITS and vertical_pos in MOVE_LIMITS:
             horizontal_coord = self.position[0] + horizontal_pos
             vertical_coord = self.position[1] + vertical_pos
@@ -47,7 +48,7 @@ class Player(object):
                 self.position[0] += horizontal_pos
                 self.position[1] += vertical_pos
             else:
-                raise IllegalMoveException("Player position outside grid range")
+                raise IllegalMoveException("Player position outside grid range {} {}".format(vertical_coord, horizontal_coord))
         else:
             raise IllegalMoveException("Player moves not in range {}".format(MOVE_LIMITS))
         return self.position

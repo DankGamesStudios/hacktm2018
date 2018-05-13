@@ -290,12 +290,21 @@ export default class Game extends Phaser.State {
         for (let i = 0; i < this.rows.length; i++) {
             let row = this.rows[i];
             for (let col = 0; col < row.length; col++) {
+                row[col].tile.my_x = i;
+                row[col].tile.my_y = col;
                 if (!this.selectedTile && i >= available.minX && i <= available.maxX && col >= available.minY && col <= available.maxY) {
                     row[col].tile.loadTexture('normal_tile_available');
+                    row[col].tile.inputEnabled = true;
+                    row[col].tile.input.useHandCursor = true;
+
                 } else if (this.selectedTile == row[col].tile) {
                     row[col].tile.loadTexture('normal_tile_selected');
+                    row[col].tile.inputEnabled = false;
+                    row[col].tile.input.useHandCursor = false;
                 } else {
                     row[col].tile.loadTexture('normal_tile');
+                    row[col].tile.inputEnabled = false;
+                    row[col].tile.input.useHandCursor = false;
                 }
             }
         }

@@ -108,8 +108,10 @@ class Game(object):
             raise Exception("There's no player with that id!")
         # if new_x and new_y are absolute, not relative to player position,
         # uncomment next lines
-        new_x = moving_player.position[0] - new_x
-        new_y = moving_player.position[1] - new_y
+
+        print('mv1', moving_player.position[0],moving_player.position[1], new_x, new_y)
+        new_x = new_x - moving_player.position[0]
+        new_y = new_y - moving_player.position[1]
         moving_player.move(new_x, new_y)
 
     def make_a_turn(self):
