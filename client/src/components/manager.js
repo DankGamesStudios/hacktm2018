@@ -45,10 +45,20 @@ export default class GameManager {
             2: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
             1: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
         };
+        this.gameState = 'running';
+        this.winner = null;
     }
 
     getSelectableTiles() {
         let player = this.players[this.playerId];
+        if (player.health < 0) {
+            return {
+                minX: -1,
+                maxX: -1,
+                minY: -1,
+                maxY: -1,
+            };
+        }
         return {
             minX: player.x - 2,
             maxX: player.x + 2,
@@ -85,6 +95,8 @@ export default class GameManager {
                 this.lastRow++;
                 this.rows[this.lastRow] = message.nextRow;
                 this.players = message.players;
+                this.gameState = message.state;
+                this.winner = message.winner;
                 if (!this.started) {
                     this.on_ready();
                     this.started = true;
