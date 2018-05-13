@@ -16,10 +16,15 @@ def test_laser():
     test_obj = powerups.Laser()
     iterable = iter(game.players)
     # first player uses laser
-    test_obj.activate(game, game.players[next(iterable)])
+    first_player = game.players[next(iterable)]
+    test_obj.activate(game, first_player)
     # meaning second player suffers damage
     player2 = game.players[next(iterable)]
     assert player2.health == 100 - test_obj.damage
+    # all opponents were affected, the first player should have health=100 
+    assert len(game.animations) == 1 # one laser
+    assert len(game.animations[0].get("positions", [])) == 3 # affects 3 positions
+    assert first_player.health == 100
 
 
 def test_hammer():
