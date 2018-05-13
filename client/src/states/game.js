@@ -62,7 +62,7 @@ export default class Game extends Phaser.State {
         let color = '#9eff63';
         if (this.manager.playerId === id) {
             color = '#00ddcc';
-            sprite.scale.setTo(this.playerScale*1.5, this.playerScale*1.5);
+            sprite.scale.setTo(this.playerScale * 1.5, this.playerScale * 1.5);
         }
         // else {
         //     sprite.alpha = 75;
@@ -70,7 +70,7 @@ export default class Game extends Phaser.State {
 
         let nameSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
-            this.player_start_y +10 + this.offestGlobalY,
+            this.player_start_y + 10 + this.offestGlobalY,
             name,
             {font: '30px', fill: color, align: 'center'});
         nameSprite.anchor.set(0.5, 0.5);
@@ -179,7 +179,7 @@ export default class Game extends Phaser.State {
             }
         });
         this.timerText = this.game.add.text(
-            80, 
+            80,
             10 + this.offestGlobalY,
             'Timer',
             {font: '30px', fill: '#9eff63', align: 'center'});
@@ -225,7 +225,7 @@ export default class Game extends Phaser.State {
     setDirection(player, destination) {
         var scale = this.playerScale;
         console.log(player);
-        if(player.playerId == this.manager.playerId){
+        if (player.playerId == this.manager.playerId) {
             scale = scale * 1.7;
         }
         if (player.x > destination.x) {
@@ -238,6 +238,20 @@ export default class Game extends Phaser.State {
         // } else {
         //     player.angle = -30;
         // }
+    }
+
+    animationAngle(source, destination) {
+        // console.log(source.y, destination.y, source.x, source.y);
+        // if (source.y > destination.y) {
+        //     // source.angle = 90;
+        // } else {
+        //     source.angle = -90;
+        // }
+        if (source.x > destination.x) {
+            source.angle = -90;
+        } else {
+            source.angle = 90;
+        }
     }
 
     updatePlayers() {
@@ -286,16 +300,19 @@ export default class Game extends Phaser.State {
         for (let animationIndex in this.manager.animations) {
             let animation = this.manager.animations[animationIndex];
             if (animation.power === 'laser') {
-                // console.log('rendering laser', animation);
-                for (let positionIndex in  animation.positions) {
+                console.log('rendering laser', animation);
+                let origin = this.rows[animation.origin[0]][animation.origin[1]].tile;
+                for (let positionIndex in animation.positions) {
                     let position = animation.positions[positionIndex];
                     let x = position.pos[0], y = position.pos[1];
                     let tile = this.rows[x][y].tile;
-                    let sprite = this.game.add.sprite(0, 0, 'laser');
+                    let sprite = this.game.add.sprite(origin.x, origin.y, 'laser');
                     sprite.anchor.setTo(0.5, 0.5);
-                    sprite.angle = this.setDirection(sprite, tile);
-                    this.game.add.tween(sprite).to({x: tile.x, y: tile.y}, 1000, 'Bounce', true);
-                    this.game.time.events.add(1500, () => {
+                    // sprite.angle = this.setDirection(origin, tile);
+                    this.animationAngle(sprite, tile);
+                    this.game.add.tween(sprite).to({x: tile.x, y: tile.y}, 2000, 'Bounce', true);
+                    console.log(origin.x, origin.y, tile.x, tile.y);
+                    this.game.time.events.add(3000, () => {
                         sprite.destroy();
                     }, this);
 
