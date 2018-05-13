@@ -26,7 +26,7 @@ export default class GameOver extends Phaser.State {
             this.game.world.centerX, this.game.world.centerY,
             status,
             {font: '50px', fill: '#de0000', align: 'center'});
-        // this.statusText.anchor.set(0.5, 0.5);
+        this.statusText.anchor.set(0.5, 0.5);
         // this.playText = this.game.add.text(
         //     this.game.world.centerX, 600,
         //     'Play',

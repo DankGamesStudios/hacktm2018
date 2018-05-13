@@ -49,6 +49,10 @@ export default class GameManager {
         this.winner = null;
     }
 
+    you() {
+        return this.players[this.playerId];
+    }
+
     getSelectableTiles() {
         let player = this.players[this.playerId];
         if (player.health < 0) {

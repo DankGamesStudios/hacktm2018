@@ -23,7 +23,7 @@ export default class Boot extends Phaser.State {
             this.game.world.centerX, 400,
             ('Players connected: ' + this.gameManager.players.length + '/ 4'),
             {font: '50px', fill: '#9eff63', align: 'center'});
-        // this.statusText.anchor.set(0.5, 0.5);
+        this.statusText.anchor.set(0.5, 0.5);
         // this.playText = this.game.add.text(
         //     this.game.world.centerX, 600,
         //     'Play',

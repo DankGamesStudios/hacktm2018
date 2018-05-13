@@ -56,23 +56,27 @@ export default class Game extends Phaser.State {
         sprite.animations.add('jump', [animationPrefix + '_jump'], 1, false);
         sprite.animations.add('walk', [animationPrefix + '_walk1', animationPrefix + '_walk2'], 2, true);
         sprite.animations.play('walk');
+        let color = '#9eff63';
+        if (this.manager.playerId === id) {
+            color = '#00ddcc';
+        }
         let nameSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y,
             namePlaceholder,
-            {font: '30px', fill: '#9eff63', align: 'center'});
+            {font: '30px', fill: color, align: 'center'});
         nameSprite.anchor.set(0.5, 0.5);
         let healthSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y + 70,
             '...',
-            {font: '30px', fill: '#9eff63', align: 'center'});
+            {font: '30px', fill: color, align: 'center'});
         healthSprite.anchor.set(0.5, 0.5);
         let extraSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y + 140,
             '',
-            {font: '30px', fill: '#9eff63', align: 'center'});
+            {font: '30px', fill: color, align: 'center'});
         extraSprite.anchor.set(0.5, 0.5);
         this.players[id] = {
             id,
@@ -226,9 +230,10 @@ export default class Game extends Phaser.State {
             player.sprite.bringToTop();
             player.sprite.angle = this.setDirection(player.sprite, target.tile);
             if (target.power) {
-                target.power.scale.setTo(2, 2);
-                this.game.add.tween(target.power).to({y: '+20'}, 500, 'Bounce', true);
-                this.game.time.events.add(100, () => {
+                target.power.scale.setTo(3, 3);
+                target.power.angle = 30;
+                this.game.add.tween(target.power).to({y: '+30'}, 500, 'Bounce', true);
+                this.game.time.events.add(600, () => {
                     target.power.destroy();
                 }, this);
             }
@@ -266,7 +271,9 @@ export default class Game extends Phaser.State {
         let status = this.manager.getStatus();
         // console.log('status', status);
         let prompt = '';
-        if (status.phase === 'select') {
+        if (this.manager.you().health < 0) {
+            prompt = 'You are dead';
+        } else if (status.phase === 'select') {
             prompt = 'Please select action';
         } else if (status.phase === 'waiting') {
             prompt = 'Waiting on other players';
