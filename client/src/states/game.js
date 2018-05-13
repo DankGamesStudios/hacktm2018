@@ -55,6 +55,7 @@ export default class Game extends Phaser.State {
         sprite.scale.setTo(this.playerScale, this.playerScale);
         sprite.animations.add('jump', [animationPrefix + '_jump'], 1, false);
         sprite.animations.add('walk', [animationPrefix + '_walk1', animationPrefix + '_walk2'], 2, true);
+        sprite.animations.add('boom', null, 16, false);
         sprite.animations.play('walk');
         let color = '#9eff63';
         if (this.manager.playerId === id) {

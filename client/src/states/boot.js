@@ -19,6 +19,11 @@ export default class Boot extends Phaser.State {
             require('../../assets/sprites/character.json')
         );
 
+        this.game.load.atlasJSONHash('boom',
+            require('../../assets/sprites/boom.png'),
+            require('../../assets/sprites/boom.json')
+        );
+
         this.game.load.spritesheet('timer', require('../../assets/images/timer.png'), 150, 20);
 
     }
