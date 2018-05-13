@@ -35,3 +35,23 @@ def test_hammer():
     assert health_sum < 400
     assert health_sum == 375
     assert first_player.health == 100
+
+def test_bomb():
+    game = create_game()
+    test_obj = powerups.Bomb()
+    iterable = iter(game.players)
+    first_player = game.players[next(iterable)]
+    second_player = game.players[next(iterable)]
+    third_player = game.players[next(iterable)]
+    fourth_player = game.players[next(iterable)]
+    first_player.position = [1, 1]
+    second_player.position = [0, 1]
+    third_player.position = [0, 3]
+    fourth_player.position = [0, 4]
+    test_obj.activate(game, first_player)
+    for player in game.players.values():
+        print(player.health)
+    assert first_player.health == 100
+    assert second_player.health == 75
+    assert third_player.health == 85
+    assert fourth_player.health == 95
