@@ -146,15 +146,17 @@ class Game(object):
                 # we have a conflict
                 luck = [random.randint(0, 10) for player in conflicts]
                 winner = luck.index(max(luck))
-                conflicts.remove(conflicts[winner])
+                winner_player = conflicts[winner]
+                conflicts.remove(winner_player)
+                self._kick_losers(conflicts)
                 self.animations.append({
                     "power": "fight",
                     "positions": [{
                         "pos": player.position,
                         "player_id": player.player_id
                     }],
+                    "origin": winner_player.position
                 })
-                self._kick_losers(conflicts)
 
     def _kick_losers(self, losers):
         """ they should move to a free adjacent cell/square.

@@ -49,6 +49,10 @@ def test_conflicts():
     g1.resolve_conflicts()
     assert first_player.position != second_player.position
     assert first_player.health != second_player.health
+    assert first_player.position == [3, 3] or second_player.position == [3, 3]
+    assert len(g1.animations) == 1
+    assert g1.animations[0].get("origin") == [3, 3]
+    assert g1.animations[0].get("positions") != [3, 3]
 
 def test_a_match():
     g1 = game.Game()
