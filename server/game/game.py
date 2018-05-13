@@ -70,7 +70,8 @@ class Game(object):
                 } for playerx in self.players.values()
             },
             "nextRow": [
-                item.name for item in self.grid.next_row
+                # item.name for item in self.grid.next_row
+                item.name for item in self.grid.squares[0]
             ],
             "winner": None,
             "animations": self.animations
@@ -85,8 +86,8 @@ class Game(object):
     def serialize_grid(self):
         return [
             [square.name for square in row]
-            for row in self.grid.squares
-        ]
+            for row in self.grid.squares [1:]
+        ] + [['empty' for _ in self.grid.next_row]]
 
     def add_default_players(self):
         """ helper method to test stuff on backend.
