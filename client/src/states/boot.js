@@ -13,10 +13,16 @@ export default class Boot extends Phaser.State {
 
         this.game.load.image('laser', require('../../assets/images/swordSilver.png'));
         this.game.load.image('shield', require('../../assets/images/shieldBronze.png'));
+        this.game.load.image('bomb', require('../../assets/images/boom-icon.png'));
 
         this.game.load.atlasJSONHash('player',
             require('../../assets/sprites/character.png'),
             require('../../assets/sprites/character.json')
+        );
+
+        this.game.load.atlasJSONHash('anvil',
+            require('../../assets/sprites/anvil.png'),
+            require('../../assets/sprites/anvil.json')
         );
 
         this.game.load.spritesheet('boom2', require('../../assets/images/explosion.png'), 64, 64, 23);

@@ -5,11 +5,15 @@ const Action = {
 const NONE = 'empty';
 const LASER = 'laser';
 const SHIELD = 'shield';
+const BOMB = 'bomb';
+const ANVIL = 'anvil';
 
 export const Tile = {
     NONE,
     LASER,
     SHIELD,
+    BOMB,
+    ANVIL
 };
 
 export default class GameManager {

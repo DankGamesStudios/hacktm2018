@@ -27,7 +27,7 @@ export default class Game extends Phaser.State {
 
         this.player_start_y = 700;
         this.player_start_x = 250;
-        this.player_spacing_x = 200;
+        this.player_spacing_x = 400;
 
         // DATA
         this.rows = []; // Top (0) -> Down (max-1)
@@ -45,9 +45,8 @@ export default class Game extends Phaser.State {
     }
 
     // position between 0 and 3
-    addPlayer(id, xTile, yTile, position, key = 'player') {
+    addPlayer(id, name, xTile, yTile, position, key = 'player') {
         let animationPrefix = position === 0 ? 'male' : position === 1 ? 'female' : 'zombie';
-        let namePlaceholder = position === 0 ? 'Male' : position === 1 ? 'Female' : 'Zombie';
         // TODO: replace with actual player name
         let tile = this.rows[xTile][yTile].tile;
         let sprite = this.game.add.sprite(tile.x, tile.y, key);
@@ -61,10 +60,11 @@ export default class Game extends Phaser.State {
         if (this.manager.playerId === id) {
             color = '#00ddcc';
         }
+
         let nameSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y,
-            namePlaceholder,
+            name,
             {font: '30px', fill: color, align: 'center'});
         nameSprite.anchor.set(0.5, 0.5);
         let healthSprite = this.game.add.text(
@@ -81,7 +81,7 @@ export default class Game extends Phaser.State {
         extraSprite.anchor.set(0.5, 0.5);
         this.players[id] = {
             id,
-            name: namePlaceholder,
+            name,
             nameSprite,
             healthSprite,
             extraSprite,
@@ -105,10 +105,18 @@ export default class Game extends Phaser.State {
         // console.log(type, Tile.LASER);
         let tile = this.game.add.sprite(x, y, 'normal_tile');
         let power = null;
+        tile.original_scale = 1;
+        tile.power_type = type;
         if (type === Tile.LASER) {
             power = this.game.add.sprite(x, y, 'laser');
         } else if (type === Tile.SHIELD) {
             power = this.game.add.sprite(x, y, 'shield');
+        } else if (type === Tile.BOMB) {
+            power = this.game.add.sprite(x, y, 'bomb');
+        } else if (type === Tile.ANVIL) {
+            power = this.game.add.sprite(x, y, 'anvil');
+            power.scale.setTo(0.1, 0.1);
+            tile.original_scale = 0.1;
         }
         if (power) {
             power.anchor.setTo(0.5, 0.5);
@@ -151,7 +159,7 @@ export default class Game extends Phaser.State {
         for (let id in this.manager.players) {
             let player = this.manager.players[id];
             console.log('adding player', player);
-            this.addPlayer(player.p_id, player.x, player.y, index);
+            this.addPlayer(player.p_id, player.name, player.x, player.y, index);
             index++;
         }
         this.timer = new VisualTimer({
@@ -231,6 +239,7 @@ export default class Game extends Phaser.State {
             player.sprite.bringToTop();
             player.sprite.angle = this.setDirection(player.sprite, target.tile);
             if (target.power) {
+                
                 target.power.scale.setTo(3, 3);
                 target.power.angle = 30;
                 this.game.add.tween(target.power).to({y: '+30'}, 500, 'Bounce', true);
