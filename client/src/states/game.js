@@ -264,6 +264,28 @@ export default class Game extends Phaser.State {
         }
     }
 
+    updateAnimations() {
+        console.log(this.manager.animations);
+        for (let animationIndex in this.manager.animations) {
+            let animation = this.manager.animations[animationIndex];
+            if (animation.power === 'laser') {
+                // console.log('rendering laser', animation);
+                for (let positionIndex in  animation.positions) {
+                    let position = animation.positions[positionIndex];
+                    let x = position.pos[0], y = position.pos[1];
+                    let tile = this.rows[x][y].tile;
+                    let sprite = this.game.add.sprite(0, 0, 'laser');
+                    sprite.anchor.setTo(0.5, 0.5);
+                    sprite.angle = this.setDirection(sprite, tile);
+                    this.game.add.tween(sprite).to({x: tile.x, y: tile.y}, 1000, 'Bounce', true);
+                    this.game.time.events.add(1500, () => {
+                        sprite.destroy();
+                    }, this);
+                }
+            }
+        }
+    }
+
     // makePlayersStatic() {
     //     for (let playerId in  this.manager.players.keys()) {
     //         let playerData = this.manager.players[playerId];
@@ -308,6 +330,7 @@ export default class Game extends Phaser.State {
             this.lastRenderedRow = this.manager.lastRow;
             this.addNewRow(this.manager.rows[this.lastRenderedRow]);
             this.updatePlayers();
+            this.updateAnimations();
             this.timer.reset();
             this.timer.start();
             this.selectedTile = null;

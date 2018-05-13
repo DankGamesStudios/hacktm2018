@@ -51,6 +51,7 @@ export default class GameManager {
         };
         this.gameState = 'running';
         this.winner = null;
+        this.animations = [];
     }
 
 
@@ -106,6 +107,7 @@ export default class GameManager {
                 this.players = message.players;
                 this.gameState = message.state;
                 this.winner = message.winner;
+                this.animations = message.animations;
                 if (!this.started) {
                     this.on_ready();
                     this.started = true;
