@@ -22,8 +22,11 @@ virtualenv --python=$(which python3) spamvenv
 source spamvenv/bin/activate
 ```
 
-Then install the spam-server and run the single test in existence
+Then install the spam-server and run the spam server
 ```
-pip install .
-python -m pytest server/test/test_game.py
+cd server
+pip install . -e # might not be needed
+python -m api.ws
+# or run tests
+python -m pytest server/test/test_*.py
 ```
