@@ -166,9 +166,17 @@ export default class Game extends Phaser.State {
         player1.sprite.bringToTop();
         if (this.selectedTile) {
             player1.sprite.angle = this.setDirection(player1.sprite, this.selectedTile);
-            let newLocation = {x: this.selectedTile.x, y: this.selectedTile.y + this.row_size};
+            let newLocation = {x: this.selectedTile.x, y: this.selectedTile.y + this.row_size - 30};
             player1.sprite.animations.play('jump', 1, false);
-            this.game.add.tween(player1.sprite).to(newLocation, 1000, Phaser.Easing.Bounce.Out, true, 0);
+            
+            // animate the player move to appear like a jump or flight
+            let tween = this.game.add.tween(player1.sprite).to({
+            x: [newLocation.x, newLocation.x + 50, newLocation.x],
+            y: [newLocation.y, newLocation.y - 200, newLocation.y],
+            }, 1000, Phaser.Easing.Quadratic.Out, true).interpolation(function(v, k){
+                return Phaser.Math.bezierInterpolation(v, k);
+            });
+            
             this.game.time.events.add(1000, walkAgain, this);
             function walkAgain() {player1.sprite.animations.play('walk', 2, true)}
         } else {
