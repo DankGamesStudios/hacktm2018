@@ -37,6 +37,7 @@ export default class Game extends Phaser.State {
         this.players = {};
         this.timer = null;
         this.lastRenderedRow = 0;
+        this.playerScale = 0.6;
     }
 
     preload(game) {
@@ -45,11 +46,14 @@ export default class Game extends Phaser.State {
 
     // position between 0 and 3
     addPlayer(name, xTile, yTile, position, key = 'player') {
+        let animationPrefix = position === 0 ? 'male' : position === 1 ? 'female' : 'zombie';
         let tile = this.rows[yTile][xTile].tile;
         let sprite = this.game.add.sprite(tile.x, tile.y, key);
         sprite.anchor.setTo(0.5, 0.5);
-        sprite.animations.add('jump', ['male_jump'], 1, false);
-        sprite.animations.add('walk', ['male_walk1', 'male_walk2'], 2, true);
+        sprite.scale.setTo(this.playerScale, this.playerScale);
+        sprite.animations.add('jump', [animationPrefix + '_jump'], 1, false);
+        sprite.animations.add('walk', [animationPrefix + '_walk1', animationPrefix + '_walk2'], 2, true);
+        sprite.animations.play('walk');
         let nameSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y,
@@ -130,6 +134,7 @@ export default class Game extends Phaser.State {
             }
             this.rows.push(new_row);
         }
+        this.lastRenderedRow = 5;
     }
 
     create(game) {
@@ -156,23 +161,26 @@ export default class Game extends Phaser.State {
         console.log('Game state');
     };
 
-    // setNewRowState(stateFromServer) {
-    //     console.log('Something happened on the server, let\'s update rows');
-    //     this.move_rows = true;
-    //     window.setTimeout(() => {
-    //         this.setNewRowState({});
-    //         this.timer.reset();
-    //         this.timer.start();
-    //     }, 5000);
-    // }
-
     addNewRow(rowData) {
+        for (let rIndex = 0; rIndex < this.rows.length; rIndex++) {
+            let row = this.rows[rIndex];
+            for (let tileIndex = 0; tileIndex < row.length; tileIndex++) {
+                let tileData = row[tileIndex];
+                this.game.add.tween(tileData.tile).to({y: '+' + this.row_size}, 300, 'Bounce', true);
+                if (tileData.power) {
+                    this.game.add.tween(tileData.power).to({y: '+' + this.row_size}, 300, 'Bounce', true);
+                }
+            }
+        }
         let removedRow = this.rows.splice(-1, 1)[0];
         removedRow.map(tileData => {
             if (this.selectedTile === tileData.tile) {
                 this.selectedTile = null;
             }
             tileData.tile.destroy();
+            if (tileData.power) {
+                tileData.power.destroy();
+            }
         });
         let newRow = [];
         for (let col = 0; col < this.nr_columns; col++) {
@@ -186,9 +194,9 @@ export default class Game extends Phaser.State {
 
     setDirection(player, destination) {
         if (player.x > destination.x) {
-            player.scale.x = -1;
+            player.scale.x = -this.playerScale;
         } else {
-            player.scale.x = 1;
+            player.scale.x = this.playerScale;
         }
         // if (player.y > destination.y) {
         //     player.angle = 30;
@@ -198,15 +206,18 @@ export default class Game extends Phaser.State {
     }
 
     updatePlayers() {
-        let player1 = this.players['Player1'];
-        player1.sprite.bringToTop();
-        if (this.selectedTile) {
-            player1.sprite.angle = this.setDirection(player1.sprite, this.selectedTile);
-            let newLocation = {x: this.selectedTile.x, y: this.selectedTile.y + this.row_size - 30};
-            player1.sprite.animations.play('jump', 1, false);
+        for (let playerIndex in this.manager.players) {
+            let playerData = this.manager.players[playerIndex];
+            console.log('update player', playerData);
+            let player = this.players[playerData.name];
+            let target = this.rows[playerData.y][playerData.x];
+            player.sprite.bringToTop();
+            player.sprite.angle = this.setDirection(player.sprite, target.tile);
+            let newLocation = {x: target.tile.x, y: target.tile.y + this.row_size};
+            player.sprite.animations.play('jump', 1, false);
 
             // animate the player move to appear like a jump or flight
-            let tween = this.game.add.tween(player1.sprite).to({
+            let tween = this.game.add.tween(player.sprite).to({
                 x: [newLocation.x, newLocation.x + 50, newLocation.x],
                 y: [newLocation.y, newLocation.y - 200, newLocation.y],
             }, 1000, Phaser.Easing.Quadratic.Out, true).interpolation(function (v, k) {
@@ -216,12 +227,18 @@ export default class Game extends Phaser.State {
             this.game.time.events.add(1000, walkAgain, this);
 
             function walkAgain() {
-                player1.sprite.animations.play('walk', 2, true)
+                player.sprite.animations.play('walk', 2, true);
             }
-        } else {
-            player1.sprite.animations.play('walk', 2, true);
         }
     }
+
+    // makePlayersStatic() {
+    //     for (let playerId in  this.manager.players.keys()) {
+    //         let playerData = this.manager.players[playerId];
+    //         let player = this.players[playerData.name];
+    //         player.sprite.animations.play('walk', 2, true);
+    //     }
+    // }
 
     update(game) {
         let status = this.manager.getStatus();
@@ -250,6 +267,9 @@ export default class Game extends Phaser.State {
         if (this.lastRenderedRow != this.manager.lastRow) {
             this.lastRenderedRow = this.manager.lastRow;
             this.addNewRow(this.manager.rows[this.lastRenderedRow]);
+            this.updatePlayers();
+            this.timer.reset();
+            this.timer.start();
         }
         let available = this.manager.getSelectableTiles();
         for (let i = 0; i < this.rows.length; i++) {
@@ -264,20 +284,5 @@ export default class Game extends Phaser.State {
                 }
             }
         }
-
-        // if (this.move_rows) {
-        //     // console.log('moving rows', this.rows);
-        //     for (let rIndex = 0; rIndex < this.rows.length; rIndex++) {
-        //         let row = this.rows[rIndex];
-        //         for (let tileIndex = 0; tileIndex < row.length; tileIndex++) {
-        //             let tile = row[tileIndex];
-        //             this.game.add.tween(tile).to({y: '+' + this.row_size}, 300, 'Bounce', true);
-        //         }
-        //     }
-        //     this.addNewRow();
-        //     this.move_rows = false;
-        //     this.updatePlayers();
-        //     // console.log('rows moved');
-        // }
     };
 };
