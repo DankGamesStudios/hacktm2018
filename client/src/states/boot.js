@@ -9,7 +9,7 @@ export default class Boot extends Phaser.State {
     preload(game) {
         this.game.load.image('normal_tile', require('../../assets/images/platform-1.png'));
         this.game.load.image('normal_tile_selected', require('../../assets/images/platform-2.png'));
-        this.game.load.image('normal_tile_available', require('../../assets/images/platform-2.png'));
+        this.game.load.image('normal_tile_available', require('../../assets/images/platform-3.png'));
 
         this.game.load.image('laser', require('../../assets/images/swordSilver.png'));
         this.game.load.image('shield', require('../../assets/images/shieldBronze.png'));
