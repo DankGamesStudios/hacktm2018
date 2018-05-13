@@ -68,7 +68,7 @@ class Game:
         with self.lock:
             self.game.move_player(player_id, new_x, new_y)
             self.moved.add(player_id)
-            if len(self.moved) == PLAYER_COUNT:
+            if len(self.moved) >= len(self.game.get_alive_players()):
                 self.game.make_a_turn()
                 self.moved = set([])
                 self.update_players()
