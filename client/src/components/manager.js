@@ -49,6 +49,7 @@ export default class GameManager {
         this.winner = null;
     }
 
+
     you() {
         return this.players[this.playerId];
     }
