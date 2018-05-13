@@ -38,9 +38,32 @@ class Game(object):
                                                     player_id=player_id)
 
     def start(self):
+        """ each story has a beginning."""
         self.grid = grid.Grid()
         print("starting game:")
         self.grid.print_grid()
+    
+    def stop(self):
+        """ each story has an end."""
+        print("stopping game")
+        self.players = {}
+        self.grid = None
+    
+    def serialize(self):
+        """ return a json with the data, so it can be displayed in phaser."""
+        data = {
+            "players": {
+                playerx.player_id: {
+                    "x": playerx.position[0],
+                    "y": playerx.position[1],
+                    "health": playerx.health
+                } for playerx in self.players.values()
+            },
+            "nextRow": [
+                item.name for item in self.grid.next_row
+            ]
+        }
+        return data
 
     def add_default_players(self):
         """ helper method to test stuff on backend.
@@ -53,7 +76,22 @@ class Game(object):
                             name=player_id,
                             position=[2, 2 + 4 * index])
 
+    def get_alive_players(self):
+        """ method to help with deciding if we need another turn."""
+        return [
+            player for player in self.players.values()
+            if player.health > 0
+        ]
+
+    def make_a_turn(self):
+        """ maybe this is needed?"""
+        self.grid.row_generate()
+        self.resolve_conflicts()
+        self.activate_powerup()
+
     def activate_powerup(self):
+        """ iterate through all players and activate the powerup
+            they're sitting on. then that square becomes empty."""
         for player in self.players.values():
             x, y = player.position
             placeholder = self.grid.squares[x][y]
@@ -61,7 +99,6 @@ class Game(object):
                 placeholder.powerup.activate(self, player)
                 placeholder = grid.EMPTY
             player.turn_effects()
-        self.resolve_conflicts()
 
     def resolve_conflicts(self):
         """ go through each player and resolve conflicts"""
@@ -72,9 +109,9 @@ class Game(object):
                 luck = [random.randint(0, 10) for player in conflicts]
                 winner = luck.index(max(luck))
                 conflicts.remove(conflicts[winner])
-                self.kick_losers(conflicts)
+                self._kick_losers(conflicts)
 
-    def kick_losers(self, losers):
+    def _kick_losers(self, losers):
         """ they should move to a free adjacent cell/square.
             this be one huge function, many apologies."""
         for player in losers:

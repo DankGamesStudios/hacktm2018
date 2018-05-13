@@ -11,7 +11,7 @@ class Player(object):
         print("creating player")
         self.health = 100
         self.name = name
-        self.my_id = player_id
+        self.player_id = player_id
         self.position = list(position)
         # add all side effects here, like freezing, invisibility, shields, etc.
         # with the remaining number of turns to be active
