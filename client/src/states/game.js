@@ -72,13 +72,13 @@ export default class Game extends Phaser.State {
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y + 70,
             '...',
-            {font: '30px', fill: color, align: 'center'});
+            {font: '60px', fill: color, align: 'center'});
         healthSprite.anchor.set(0.5, 0.5);
         let extraSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y + 140,
             '',
-            {font: '30px', fill: color, align: 'center'});
+            {font: '60px', fill: color, align: 'center'});
         extraSprite.anchor.set(0.5, 0.5);
         this.players[id] = {
             id,
