@@ -1,16 +1,19 @@
 """ Module for player logic. This could include the AI as well. """
-from .exceptions import IllegalMoveException
-from .options import GRID_HEIGHT, GRID_WIDTH
+import random
+
+from exceptions import IllegalMoveException
+from options import GRID_HEIGHT, GRID_WIDTH
+from name_choices import NAMES, ADJECTIVES
 
 MOVE_LIMITS = range(-3, 3)
 
 class Player(object):
     """ Class to model business logic of player.
         It can/will interact with the Grid and other Players."""
-    def __init__(self, name, position, player_id=""):
+    def __init__(self, position, player_id=""):
         print("creating player")
         self.health = 100
-        self.name = name
+        self.name = self.generate_name()
         self.player_id = player_id
         self.position = list(position)
         # add all side effects here, like freezing, invisibility, shields, etc.
@@ -28,6 +31,12 @@ class Player(object):
             x=self.position[0],
             y=self.position[1]
         )
+
+    def generate_name(self):
+        name = random.choice(NAMES)
+        adjective = random.choice(ADJECTIVES)
+        nb = random.randint(100, 999)
+        return '{} {}-{}'.format(adjective, name, nb)
 
     def valid_position(self):
         if not self.position_in_grid_range(self.position[0], self.position[1]):
