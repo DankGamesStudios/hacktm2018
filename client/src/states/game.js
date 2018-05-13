@@ -45,7 +45,7 @@ export default class Game extends Phaser.State {
     }
 
     // position between 0 and 3
-    addPlayer(name, xTile, yTile, position, key = 'player') {
+    addPlayer(id, xTile, yTile, position, key = 'player') {
         let animationPrefix = position === 0 ? 'male' : position === 1 ? 'female' : 'zombie';
         let namePlaceholder = position === 0 ? 'Male' : position === 1 ? 'Female' : 'Zombie';
         // TODO: replace with actual player name
@@ -74,8 +74,9 @@ export default class Game extends Phaser.State {
             '',
             {font: '30px', fill: '#9eff63', align: 'center'});
         extraSprite.anchor.set(0.5, 0.5);
-        this.players[name] = {
-            name,
+        this.players[id] = {
+            id,
+            name: namePlaceholder,
             nameSprite,
             healthSprite,
             extraSprite,
@@ -141,10 +142,12 @@ export default class Game extends Phaser.State {
 
     create(game) {
         this.drawBoard();
-        // this.setNewRowState({});
-        for (let i = 0; i < this.manager.players.length; i++) {
-            let player = this.manager.players[i];
-            this.addPlayer(player.name, player.x, player.y, i);
+        let index = 0;
+        for (let id in this.manager.players) {
+            let player = this.manager.players[id];
+            console.log('adding player', player);
+            this.addPlayer(player.p_id, player.x, player.y, index);
+            index++;
         }
         this.timer = new VisualTimer({
             game: this.game,
@@ -208,17 +211,19 @@ export default class Game extends Phaser.State {
     }
 
     updatePlayers() {
-        for (let playerIndex in this.manager.players) {
-            let playerData = this.manager.players[playerIndex];
+        for (let playerId in this.manager.players) {
+            let playerData = this.manager.players[playerId];
             // console.log('update player', playerData);
-            let player = this.players[playerData.name];
+            let player = this.players[playerData.p_id];
             let target = this.rows[playerData.x][playerData.y];
             player.sprite.bringToTop();
             player.sprite.angle = this.setDirection(player.sprite, target.tile);
             if (target.power) {
                 target.power.scale.setTo(2, 2);
                 this.game.add.tween(target.power).to({y: '+20'}, 500, 'Bounce', true);
-                this.game.time.events.add(100, () => {target.power.destroy()}, this);
+                this.game.time.events.add(100, () => {
+                    target.power.destroy()
+                }, this);
             }
             let newLocation = {x: target.tile.x, y: target.tile.y + this.row_size};
             player.sprite.animations.play('jump', 1, false);
