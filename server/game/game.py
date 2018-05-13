@@ -162,46 +162,46 @@ class Game(object):
             player.damage(SAME_SQUARE_DAMAGE)
             x, y = player.position
             # try west
-            if (0 <= (x - 1) > options.GRID_WIDTH and
+            if (0 <= (x - 1) < options.GRID_WIDTH and
                 not self._is_position_busy([x - 1, y])
                 ):
                 player.position = [x - 1, y]
             # else north-west (lol, like kanye's daughter)
-            elif (0 <= (y - 1) > options.GRID_HEIGHT and
-                  0 <= (x - 1) > options.GRID_WIDTH and
+            elif (0 <= (y - 1) < options.GRID_HEIGHT and
+                  0 <= (x - 1) < options.GRID_WIDTH and
                   not self._is_position_busy([x -1, y - 1])
                   ): 
                 player.position = [x -1, y - 1]
             # else try north
-            elif (0 <= (y - 1) > options.GRID_HEIGHT and
+            elif (0 <= (y - 1) < options.GRID_HEIGHT and
                   not self._is_position_busy([x, y - 1])
                   ):
                 player.position = [x, y - 1]
             # else try north-east
-            elif (0 <= (y - 1) > options.GRID_HEIGHT and
-                  0 <= (x + 1) > options.GRID_WIDTH and
+            elif (0 <= (y - 1) < options.GRID_HEIGHT and
+                  0 <= (x + 1) < options.GRID_WIDTH and
                   not self._is_position_busy([x + 1, y - 1])
                   ):
                 player.position = [x + 1, y - 1]
             # else try east
-            elif (0 <= (x + 1) > options.GRID_WIDTH and
+            elif (0 <= (x + 1) < options.GRID_WIDTH and
                 not self._is_position_busy([x + 1, y])
                 ):
                 player.position = [x + 1, y]
             # else try south-east
-            elif (0 <= (y + 1) > options.GRID_HEIGHT and
-                  0 <= (x + 1) > options.GRID_WIDTH and
+            elif (0 <= (y + 1) < options.GRID_HEIGHT and
+                  0 <= (x + 1) < options.GRID_WIDTH and
                   not self._is_position_busy([x + 1, y + 1])
                   ):
                 player.position = [x + 1, y + 1]
             # else try south
-            elif (0 <= (y + 1) > options.GRID_HEIGHT and
+            elif (0 <= (y + 1) < options.GRID_HEIGHT and
                   not self._is_position_busy([x, y + 1])
                   ):
                 player.position = [x, y + 1]
             # else try south-west
-            elif (0 <= (y + 1) > options.GRID_HEIGHT and
-                  0 <= (x - 1) > options.GRID_WIDTH and
+            elif (0 <= (y + 1) < options.GRID_HEIGHT and
+                  0 <= (x - 1) < options.GRID_WIDTH and
                   not self._is_position_busy([x - 1, y + 1])
                   ):
                 player.position = [x - 1, y + 1]
