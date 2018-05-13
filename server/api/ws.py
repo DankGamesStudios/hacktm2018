@@ -99,6 +99,7 @@ class GameServer:
                 'p_index': player.index,
                 'grid': game.game.serialize_grid(),
             })
+        game.update_players()
         return game
 
     def handle_message(self, message):
