@@ -126,8 +126,8 @@ export default class GameManager {
     }
 
     createSocket() {
-        // let s = new WebSocket('ws://10.10.2.16:8000/');
-        let s = new WebSocket('ws://localhost:8000/');
+        let s = new WebSocket('ws://10.10.2.16:8000/');
+        // let s = new WebSocket('ws://localhost:8000/');
         this.s = s;
         s.addEventListener('error', function (m) {
             console.log("error");
