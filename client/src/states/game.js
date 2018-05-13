@@ -45,9 +45,11 @@ export default class Game extends Phaser.State {
     }
 
     // position between 0 and 3
-    addPlayer(name, xTile, yTile, position, key = 'player') {
+    addPlayer(id, xTile, yTile, position, key = 'player') {
         let animationPrefix = position === 0 ? 'male' : position === 1 ? 'female' : 'zombie';
-        let tile = this.rows[yTile][xTile].tile;
+        let namePlaceholder = position === 0 ? 'Male' : position === 1 ? 'Female' : 'Zombie';
+        // TODO: replace with actual player name
+        let tile = this.rows[xTile][yTile].tile;
         let sprite = this.game.add.sprite(tile.x, tile.y, key);
         sprite.anchor.setTo(0.5, 0.5);
         sprite.scale.setTo(this.playerScale, this.playerScale);
@@ -57,13 +59,13 @@ export default class Game extends Phaser.State {
         let nameSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y,
-            name,
+            namePlaceholder,
             {font: '30px', fill: '#9eff63', align: 'center'});
         nameSprite.anchor.set(0.5, 0.5);
         let healthSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y + 70,
-            '9000+',
+            '...',
             {font: '30px', fill: '#9eff63', align: 'center'});
         healthSprite.anchor.set(0.5, 0.5);
         let extraSprite = this.game.add.text(
@@ -72,8 +74,9 @@ export default class Game extends Phaser.State {
             '',
             {font: '30px', fill: '#9eff63', align: 'center'});
         extraSprite.anchor.set(0.5, 0.5);
-        this.players[name] = {
-            name,
+        this.players[id] = {
+            id,
+            name: namePlaceholder,
             nameSprite,
             healthSprite,
             extraSprite,
@@ -139,10 +142,12 @@ export default class Game extends Phaser.State {
 
     create(game) {
         this.drawBoard();
-        // this.setNewRowState({});
-        for (let i = 0; i < this.manager.players.length; i++) {
-            let player = this.manager.players[i];
-            this.addPlayer(player.name, player.x, player.y, i);
+        let index = 0;
+        for (let id in this.manager.players) {
+            let player = this.manager.players[id];
+            console.log('adding player', player);
+            this.addPlayer(player.p_id, player.x, player.y, index);
+            index++;
         }
         this.timer = new VisualTimer({
             game: this.game,
@@ -189,7 +194,7 @@ export default class Game extends Phaser.State {
             newRow.push(this.createTile(x, y, col, this.lastRenderedRow, rowData[col]));
         }
         this.rows.splice(0, 0, newRow);
-        console.log('adding new row', this.rows);
+        // console.log('adding new row', this.rows);
     }
 
     setDirection(player, destination) {
@@ -206,13 +211,20 @@ export default class Game extends Phaser.State {
     }
 
     updatePlayers() {
-        for (let playerIndex in this.manager.players) {
-            let playerData = this.manager.players[playerIndex];
-            console.log('update player', playerData);
-            let player = this.players[playerData.name];
-            let target = this.rows[playerData.y][playerData.x];
+        for (let playerId in this.manager.players) {
+            let playerData = this.manager.players[playerId];
+            // console.log('update player', playerData);
+            let player = this.players[playerData.p_id];
+            let target = this.rows[playerData.x][playerData.y];
             player.sprite.bringToTop();
             player.sprite.angle = this.setDirection(player.sprite, target.tile);
+            if (target.power) {
+                target.power.scale.setTo(2, 2);
+                this.game.add.tween(target.power).to({y: '+20'}, 500, 'Bounce', true);
+                this.game.time.events.add(100, () => {
+                    target.power.destroy()
+                }, this);
+            }
             let newLocation = {x: target.tile.x, y: target.tile.y + this.row_size};
             player.sprite.animations.play('jump', 1, false);
 
@@ -265,6 +277,8 @@ export default class Game extends Phaser.State {
             this.players[player.name].healthSprite.text = player.health;
         }
         if (this.lastRenderedRow != this.manager.lastRow) {
+            console.log('Rendering next state');
+            console.log(this.players, this.manager.players);
             this.lastRenderedRow = this.manager.lastRow;
             this.addNewRow(this.manager.rows[this.lastRenderedRow]);
             this.updatePlayers();

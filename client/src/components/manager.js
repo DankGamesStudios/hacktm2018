@@ -20,7 +20,7 @@ export default class GameManager {
         this.availablePlayers = 0;
         this.playerId = null;
         this.gameId = null;
-        this.players = [];
+        this.players = {};
         // this.players = [{
         //     name: 'You',
         //     x: 4,
@@ -37,6 +37,7 @@ export default class GameManager {
         this.round = 0;
         this.phase = 'select';
         this.lastRow = 5;
+        this.started = false;
         this.rows = {
             5: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
             4: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
@@ -47,7 +48,7 @@ export default class GameManager {
     }
 
     getSelectableTiles() {
-        let player = this.players[this.myIndex];
+        let player = this.players[this.playerId];
         return {
             minX: player.x - 2,
             maxX: player.x + 2,
@@ -70,15 +71,21 @@ export default class GameManager {
                 this.myIndex = message.p_index;
                 this.playerId = message.p_id;
                 this.gameId = message.g_id;
-                this.players = message.players;
-                this.on_ready();
+                this.players = {};
                 break;
             case "WAITING":
                 this.availablePlayers = message.q_id;
                 break;
             case "UPDATE":
-                this.lastRow ++;
+                console.log('UPDATE', message);
+
+                this.lastRow++;
                 this.rows[this.lastRow] = message.nextRow;
+                this.players = message.players;
+                if (!this.started) {
+                    this.on_ready();
+                    this.started = true;
+                }
                 break;
             default:
                 console.log("unknow msg", message);

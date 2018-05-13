@@ -40,7 +40,8 @@ class Player(object):
 
     def valid_position(self):
         if not self.position_in_grid_range(self.position[0], self.position[1]):
-            raise IllegalMoveException("Player position outside grid range")
+            raise IllegalMoveException(
+                "Player position outside grid range, {}".format(self.position))
         return True
 
     def position_in_grid_range(self, row_coord, col_coord):
