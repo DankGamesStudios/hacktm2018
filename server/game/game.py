@@ -83,6 +83,17 @@ class Game(object):
             if player.health > 0
         ]
 
+    def move_player(self, player_id, new_x, new_y):
+        """ method to facilitate the moving of players through game."""
+        moving_player = self.players.get(player_id, None)
+        if not moving_player:
+            raise Exception("There's no player with that id!")
+        # if new_x and new_y are absolute, not relative to player position,
+        # uncomment next lines
+        # new_x = moving_player.position[0] - new_x
+        # new_y = moving_player.position[1] - new_y
+        moving_player.move(new_x, new_y)
+
     def make_a_turn(self):
         """ maybe this is needed?"""
         self.grid.row_generate()

@@ -7,7 +7,12 @@ setup(
     platforms='any',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["pytest==3.5.1",],
+    install_requires=[
+        "pytest==3.5.1",
+        "pyzmq==17.0.0",
+        "gevent==1.3.0",
+        "gevent-websocket==0.10.1"
+    ],
     author="Artists formerly known as spam",
     author_email="radu@devrandom.ro",
     description="",
