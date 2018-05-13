@@ -105,6 +105,7 @@ class GameServer:
                 'action': 'START_GAME',
                 'g_id': game.game_id,
                 'p_id': player.p_id,
+                'p_name': player.name,
                 'p_index': player.index,
                 'grid': game.game.serialize_grid(),
             })
