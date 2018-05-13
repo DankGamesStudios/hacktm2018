@@ -1,6 +1,6 @@
 import random
 
-from name_choices import NAMES, ADJECTIVES
+from .name_choices import NAMES, ADJECTIVES
 
 
 def get_name():
