@@ -1,7 +1,34 @@
-from powerups import Square, EMPTY
+import random
+from game.powerups import Laser
+from game.options import GRID_HEIGHT, GRID_WIDTH
 
-GRID_HEIGHT = 5
-GRID_WIDTH  = 15
+
+class Placeholder(object):
+    """ Class to model a Square-like thing on the grid.
+        It will be extended in the Powerups."""
+    def __init__(self, name="empty", powerup=None):
+        self.name = name
+        self.powerup = powerup
+    
+    def __str__(self):
+        return "{}".format(self.name)
+
+EMPTY = Placeholder()
+
+OPTIONS = [
+    Placeholder('laser', Laser()),
+    Placeholder('land-mine'),
+    Placeholder('glasses'),
+    Placeholder('sound'),
+    Placeholder('radioactive'),
+    Placeholder('jet-fighter'),
+    Placeholder('health'),
+    Placeholder('foo'),
+    EMPTY,
+    EMPTY,
+]
+OPTION_SIZE = len(OPTIONS) - 1
+
 
 class Grid(object):
     def __init__(self):
@@ -12,21 +39,27 @@ class Grid(object):
         """
         print("creating grid")
         self.squares = [
-            [Square() for _ in range(GRID_WIDTH)]
+            [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
             for _ in range(GRID_HEIGHT - 2)
         ] + [
-            [Square(EMPTY) for _ in range(GRID_WIDTH)]
+            [EMPTY for _ in range(GRID_WIDTH)]
             for _ in range(2)
         ]
-        self.next_row = [Square() for _ in range(GRID_WIDTH)]
+        self.next_row = [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
+        self._deleted_rows = []
+
+    def _get_a_placeholder(self):
+        option = random.randint(0, OPTION_SIZE)
+        placeholder = OPTIONS[option]
+        return placeholder
 
     def row_generate(self):
         """ row_generate adds a row at the start of the grid, like a queue,
             and removes the last row, keeping the same size."""
         print("generating next row ...")
-        self.squares.pop(GRID_HEIGHT - 1) # pop the last row
+        self._deleted_rows.append(self.squares.pop(GRID_HEIGHT - 1)) # pop the last row
         self.squares.insert(0, self.next_row)
-        self.next_row = [Square() for _ in range(GRID_WIDTH)]
+        self.next_row = [self._get_a_placeholder() for _ in range(GRID_WIDTH)]
 
 
     def print_grid(self):
