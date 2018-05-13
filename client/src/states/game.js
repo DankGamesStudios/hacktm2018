@@ -15,7 +15,7 @@ export default class Game extends Phaser.State {
         this.manager = manager;
 
         this.board_margin_x = 100;
-        this.board_margin_y = 170;
+        this.board_margin_y = 170 + 40;
         this.padding_x = 20;
         this.padding_y = 20;
         this.tile_size = 60;
@@ -25,6 +25,7 @@ export default class Game extends Phaser.State {
         this.timerText = null;
         //TODO: use arrow functions, but webpack/babel did not cooperate
         this.selectNextTile = this.selectNextTile.bind(this);
+        this.offestGlobalY = 40;
 
         this.player_start_y = 700;
         this.player_start_x = 250;
@@ -64,19 +65,19 @@ export default class Game extends Phaser.State {
 
         let nameSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
-            this.player_start_y,
+            this.player_start_y +10 + this.offestGlobalY,
             name,
             {font: '30px', fill: color, align: 'center'});
         nameSprite.anchor.set(0.5, 0.5);
         let healthSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
-            this.player_start_y + 70,
+            this.player_start_y + 80 + this.offestGlobalY,
             '...',
             {font: '60px', fill: color, align: 'center'});
         healthSprite.anchor.set(0.5, 0.5);
         let extraSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
-            this.player_start_y + 140,
+            this.player_start_y + 130 + this.offestGlobalY,
             '',
             {font: '60px', fill: color, align: 'center'});
         extraSprite.anchor.set(0.5, 0.5);
@@ -166,7 +167,7 @@ export default class Game extends Phaser.State {
         this.timer = new VisualTimer({
             game: this.game,
             x: 80,
-            y: 50,
+            y: 50 + this.offestGlobalY,
             seconds: 30,
             onComplete: function () {
                 console.log('timer completed')
@@ -174,12 +175,12 @@ export default class Game extends Phaser.State {
         });
         this.timerText = this.game.add.text(
             80, 
-            10,
+            10 + this.offestGlobalY,
             'Timer',
             {font: '30px', fill: '#9eff63', align: 'center'});
         this.roundText = this.game.add.text(
             600,
-            44,
+            44 + this.offestGlobalY,
             'Round 0',
             {font: '30px', fill: '#9eff63', align: 'center'});
         console.log('Game state');
