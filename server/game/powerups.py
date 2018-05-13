@@ -43,20 +43,20 @@ class Laser(Powerup):
     def activate(self, game, on_player):
         print("Laser, frate!")
         player_x, player_y = on_player.position
-        positions = {}
+        positions = []
         for idx in range(GRID_WIDTH):
             affected_pos = (player_x, idx)
-            positions.update(
-                self._activate_in_square(affected_pos, game, on_player)
-            )
+            affected = self._activate_in_square(affected_pos, game, on_player)
+            if affected:
+                positions.append(affected)
         for idx in range(GRID_HEIGHT):
             affected_pos = (idx, player_y)
-            positions.update(
-                self._activate_in_square(affected_pos, game, on_player)
-            )
+            affected = self._activate_in_square(affected_pos, game, on_player)
+            if affected:
+                positions.append(affected)
         game.animations.append({
             "power": "laser",
-            "positions": [positions]
+            "positions": positions
         })
 
 
@@ -117,23 +117,23 @@ class Bomb(Powerup):
         M_damage_pos = get_neighbours(on_player.position, 2)
         S_damage_pos = get_neighbours(on_player.position, 3)
 
-        positions = {}
+        positions = []
         for position in XL_damage_pos:
-            positions.update(
-                self._activate_in_square(position, game, on_player, self.XL_damage)
-            )
+            affected = self._activate_in_square(position, game, on_player, self.XL_damage)
+            if affected:
+                positions.append(affected)
         for position in M_damage_pos:
-            positions.update(
-                self._activate_in_square(position, game, on_player, self.M_damage)
-            )
+            affected = self._activate_in_square(position, game, on_player, self.M_damage)
+            if affected:
+                positions.append(affected)
         for position in S_damage_pos:
-            positions.update(
-                self._activate_in_square(position, game, on_player, self.S_damage)
-            )
+            affected = self._activate_in_square(position, game, on_player, self.S_damage)
+            if affected:
+                positions.append(affected)
 
         game.animations.append({
             "power": "bomb",
-            "positions": [positions]
+            "positions": positions
         })
 
 class Hammer(Powerup):
