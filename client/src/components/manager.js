@@ -2,9 +2,9 @@ const CREATE_PLAYER_ID = 'CREATE_PLAYER_ID';
 const Action = {
     CREATE_PLAYER_ID,
 };
-const NONE = 'NONE';
-const LASER = 'LASER';
-const SHIELD = 'SHIELD';
+const NONE = 'Empty';
+const LASER = 'Laser';
+const SHIELD = 'Shield';
 
 export const Tile = {
     NONE,
@@ -38,11 +38,11 @@ export default class GameManager {
         this.phase = 'select';
         this.lastRow = 5;
         this.rows = {
-            5: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
-            4: [Tile.NONE, Tile.SHIELD, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
-            3: [Tile.LASER, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
-            2: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
-            1: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
+            5: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
+            4: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
+            3: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
+            2: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
+            1: [Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE, Tile.NONE],
         };
     }
 
@@ -58,26 +58,30 @@ export default class GameManager {
 
     selectTile(x, y) {
         console.log("move to", x, y);
-        this.sendMessage({action: 'MOVE', x: x, y:y});
+        this.sendMessage({action: 'MOVE', x: x, y: y});
     }
 
-    handle_message(message){
+    handle_message(message) {
         var action = message.action;
         // console.log("msg", message, action);
-        switch(action){
-        case "START_GAME":
-            console.log('starting', message);
-            this.myIndex = message.p_index;
-            this.playerId = message.p_id;
-            this.gameId = message.g_id;
-            this.players = message.players;
-            this.on_ready();
-            break;
-        case "WAITING":
-            this.availablePlayers = message.q_id;
-            break;
-        default:
-            console.log("unknow msg", message);
+        switch (action) {
+            case "START_GAME":
+                console.log('starting', message);
+                this.myIndex = message.p_index;
+                this.playerId = message.p_id;
+                this.gameId = message.g_id;
+                this.players = message.players;
+                this.on_ready();
+                break;
+            case "WAITING":
+                this.availablePlayers = message.q_id;
+                break;
+            case "UPDATE":
+                this.lastRow ++;
+                this.rows[this.lastRow] = message.nextRow;
+                break;
+            default:
+                console.log("unknow msg", message);
         }
     }
 
@@ -121,7 +125,7 @@ export default class GameManager {
 
     getStatus() {
         let status = {
-            round: this.round,
+            round: this.lastRow - 4,
             phase: this.phase,
         };
         return status;

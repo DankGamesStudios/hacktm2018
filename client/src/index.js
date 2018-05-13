@@ -16,7 +16,7 @@ import GameManager from './components/manager';
 
 
 let manager = new GameManager();
-var game = new Phaser.Game(1300, 900, Phaser.AUTO);
+var game = new Phaser.Game(1700, 900, Phaser.AUTO);
 game.state.add('Boot', Boot);
 // game.state.add('Preloader', Preload);
 game.state.add('Menu', new Menu(game, manager));

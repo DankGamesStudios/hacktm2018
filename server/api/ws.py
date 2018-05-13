@@ -7,7 +7,6 @@ from collections import OrderedDict
 
 from .pubsub import Publisher, Subscriber
 
-
 PLAYER_COUNT = 3
 bus = Publisher()
 
@@ -51,7 +50,16 @@ class Game:
         self.update_players()
 
     def update_players(self):
-        state = {'foo': 'bar'}
+        state = {
+            'nextRow': ['Empty', 'Shield', 'Laser'] * 5
+        }
+        state['players'] = {
+            p_id: {
+                'x': 1,
+                'y': 2,
+                'health': 90
+            } for p_id, player in self.players.items()
+        }
         for p_id in self.players:
             bus.send(p_id, {'action': 'UPDATE', **state})
 
@@ -65,7 +73,7 @@ class GameServer:
         game = Game(g_id)
         self.games[g_id] = game
         players_4_response = [
-            {'name': player.p_id[0:3], 'x': 3+index*3, 'y':3, 'health': 100}
+            {'name': player.p_id[0:3], 'x': 3 + index * 3, 'y': 3, 'health': 100}
             for index, player in enumerate(players)
         ]
         for index, player in enumerate(players):
@@ -99,19 +107,19 @@ class Lobby:
     def __init__(self):
         self.players = []
         self.lock = RLock()
-        
+
     def add_player(self, player):
         with self.lock:
             self.players.append(player)
             print("lobby", len(self.players))
-            
+
             if len(self.players) >= PLAYER_COUNT:
                 g_players = self.players[0:PLAYER_COUNT]
                 self.players = self.players[PLAYER_COUNT:]
                 return gs.new_game(g_players)
             else:
                 for player in self.players:
-                    bus.send(player.p_id, {'action': 'WAITING', 'q_id':(len(self.players))})
+                    bus.send(player.p_id, {'action': 'WAITING', 'q_id': (len(self.players))})
 
 
 gs = GameServer()
@@ -128,7 +136,7 @@ class Application(WebSocketApplication):
 
     def on_MOVE(self, message):
         return gs.handle_message(message)
-        
+
     def on_CREATE_PLAYER_ID(self, message):
         name = message.get('name', 'nameless')
         self.player = Player.new(name=name)
@@ -136,15 +144,14 @@ class Application(WebSocketApplication):
         game = lobby.add_player(self.player)
         msg = {
             "action": "WAITING",
-            "p_id":self.player.p_id,
+            "p_id": self.player.p_id,
             "q_id": len(lobby.players),
         }
         return msg
-            
-        
+
     def on_open(self):
         print("connected")
-        
+
         # self.player = Player.new()
         # lobby.add_player(self.player)
 
@@ -169,7 +176,7 @@ class Application(WebSocketApplication):
 
     def handle_zmq(self, message):
         self.ws.send(json.dumps(message))
-    
+
     def handle(self):
         # override geventwebsocket's handle so we plug in zmq as well
         self.protocol.on_open()
@@ -189,6 +196,7 @@ class Application(WebSocketApplication):
                 break
 
             self.protocol.on_message(message)
+
 
 def main():
     WebSocketServer(

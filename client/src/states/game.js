@@ -33,9 +33,10 @@ export default class Game extends Phaser.State {
         this.rows = []; // Top (0) -> Down (max-1)
         //Each row Left (0) -> Right (max-1)
         this.nr_rows = 5;
-        this.nr_columns = 12;
+        this.nr_columns = 15;
         this.players = {};
         this.timer = null;
+        this.lastRenderedRow = 0;
     }
 
     preload(game) {
@@ -48,7 +49,7 @@ export default class Game extends Phaser.State {
         let sprite = this.game.add.sprite(tile.x, tile.y, key);
         sprite.anchor.setTo(0.5, 0.5);
         sprite.animations.add('jump', ['male_jump'], 1, false);
-        sprite.animations.add('walk', ['male_walk1','male_walk2'], 2, true);
+        sprite.animations.add('walk', ['male_walk1', 'male_walk2'], 2, true);
         let nameSprite = this.game.add.text(
             this.player_start_x + position * this.player_spacing_x,
             this.player_start_y,
@@ -165,22 +166,22 @@ export default class Game extends Phaser.State {
     //     }, 5000);
     // }
 
-    addNewRow() {
+    addNewRow(rowData) {
         let removedRow = this.rows.splice(-1, 1)[0];
-        removedRow.map(tile => {
-            if (this.selectedTile === tile) {
+        removedRow.map(tileData => {
+            if (this.selectedTile === tileData.tile) {
                 this.selectedTile = null;
             }
-            tile.destroy();
+            tileData.tile.destroy();
         });
         let newRow = [];
         for (let col = 0; col < this.nr_columns; col++) {
             let x = this.padding_x + col * this.row_size + this.board_margin_x;
             let y = this.padding_y + this.board_margin_y;
-            newRow.push(this.createTile(x, y, 'minus'));
+            newRow.push(this.createTile(x, y, col, this.lastRenderedRow, rowData[col]));
         }
         this.rows.splice(0, 0, newRow);
-        // console.log('adding new row', this.rows);
+        console.log('adding new row', this.rows);
     }
 
     setDirection(player, destination) {
@@ -203,17 +204,20 @@ export default class Game extends Phaser.State {
             player1.sprite.angle = this.setDirection(player1.sprite, this.selectedTile);
             let newLocation = {x: this.selectedTile.x, y: this.selectedTile.y + this.row_size - 30};
             player1.sprite.animations.play('jump', 1, false);
-            
+
             // animate the player move to appear like a jump or flight
             let tween = this.game.add.tween(player1.sprite).to({
-            x: [newLocation.x, newLocation.x + 50, newLocation.x],
-            y: [newLocation.y, newLocation.y - 200, newLocation.y],
-            }, 1000, Phaser.Easing.Quadratic.Out, true).interpolation(function(v, k){
+                x: [newLocation.x, newLocation.x + 50, newLocation.x],
+                y: [newLocation.y, newLocation.y - 200, newLocation.y],
+            }, 1000, Phaser.Easing.Quadratic.Out, true).interpolation(function (v, k) {
                 return Phaser.Math.bezierInterpolation(v, k);
             });
-            
+
             this.game.time.events.add(1000, walkAgain, this);
-            function walkAgain() {player1.sprite.animations.play('walk', 2, true)}
+
+            function walkAgain() {
+                player1.sprite.animations.play('walk', 2, true)
+            }
         } else {
             player1.sprite.animations.play('walk', 2, true);
         }
@@ -235,12 +239,17 @@ export default class Game extends Phaser.State {
             let extraText = '';
             if (player.status === 'waiting') {
                 extraText = 'Slowpoke!';
-            } else if (status.phase === 'done') {
-                let newTile = this.rows[player.y][player.x];
-                this.updatePlayer(playerUI, newTile)
             }
+            // } else if (status.phase === 'done') {
+            //     let newTile = this.rows[player.y][player.x];
+            //     this.updatePlayer(playerUI, newTile)
+            // }
             this.players[player.name].extraSprite.text = extraText;
             this.players[player.name].healthSprite.text = player.health;
+        }
+        if (this.lastRenderedRow != this.manager.lastRow) {
+            this.lastRenderedRow = this.manager.lastRow;
+            this.addNewRow(this.manager.rows[this.lastRenderedRow]);
         }
         let available = this.manager.getSelectableTiles();
         for (let i = 0; i < this.rows.length; i++) {
