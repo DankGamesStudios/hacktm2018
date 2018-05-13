@@ -1,5 +1,7 @@
 """ Module to test the elements in game, and the way they 
     interract with each other """
+import random
+
 import game.powerups as powerups
 import game.game as game
 import game.grid as grid
@@ -48,4 +50,24 @@ def test_conflicts():
     assert first_player.position != second_player.position
     assert first_player.health != second_player.health
 
+def test_a_match():
+    g1 = game.Game()
+    g1.add_default_players()
+    g1.start()
+    max_turns = 100
+
+    alive = g1.get_alive_players()
+    current_turns = 0
+    while len(alive) > 1 or current_turns < max_turns:
+        for player in g1.players.values():
+            x, y = player.position
+            new_x, new_y = random.randint(-2, 2), random.randint(-2, 2)
+            while not player.position_in_grid_range(x + new_x, y + new_y):
+                new_x, new_y = random.randint(-2, 2), random.randint(-2, 2)
+            player.move(new_x, new_y)
+        g1.make_a_turn()
+        alive = g1.get_alive_players()
+        current_turns += 1
+    # we need more power(ups)!!!
+    #assert current_turns < max_turns
 

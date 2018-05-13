@@ -1,5 +1,5 @@
 import random
-from game.powerups import Laser
+from game.powerups import Laser, Shield, Bomb
 from game.options import GRID_HEIGHT, GRID_WIDTH
 
 
@@ -17,13 +17,14 @@ EMPTY = Placeholder()
 
 OPTIONS = [
     Placeholder('laser', Laser()),
-    Placeholder('land-mine'),
-    Placeholder('glasses'),
-    Placeholder('sound'),
-    Placeholder('radioactive'),
-    Placeholder('jet-fighter'),
-    Placeholder('health'),
-    Placeholder('foo'),
+    Placeholder('shield', Shield()),
+    Placeholder('bomb', Bomb()),
+    # comment powerups not yet implemented
+    # Placeholder('glasses'),
+    # Placeholder('sound'),
+    # Placeholder('radioactive'),
+    # Placeholder('jet-fighter'),
+    # Placeholder('health'),
     EMPTY,
     EMPTY,
 ]
