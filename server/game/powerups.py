@@ -75,6 +75,7 @@ class Shield(Powerup):
                 "pos": on_player.position,
                 "player_id": on_player.player_id
             }],
+            "origin": on_player.position
         })
 
 
