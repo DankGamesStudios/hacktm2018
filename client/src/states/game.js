@@ -153,7 +153,7 @@ export default class Game extends Phaser.State {
             game: this.game,
             x: 120,
             y: 30,
-            seconds: 10,
+            seconds: 30,
             onComplete: function () {
                 console.log('timer completed')
             }
@@ -215,6 +215,13 @@ export default class Game extends Phaser.State {
             let playerData = this.manager.players[playerId];
             // console.log('update player', playerData);
             let player = this.players[playerData.p_id];
+            if (playerData.health <= 0) {
+                if (player.sprite.alive) {
+                    player.sprite.kill();
+                    player.sprite.destroy();
+                }
+                continue;
+            }
             let target = this.rows[playerData.x][playerData.y];
             player.sprite.bringToTop();
             player.sprite.angle = this.setDirection(player.sprite, target.tile);
@@ -253,6 +260,9 @@ export default class Game extends Phaser.State {
     // }
 
     update(game) {
+        if (this.manager.gameState != 'running') {
+            this.game.state.start('GameOver');
+        }
         let status = this.manager.getStatus();
         // console.log('status', status);
         let prompt = '';
@@ -274,7 +284,8 @@ export default class Game extends Phaser.State {
             //     this.updatePlayer(playerUI, newTile)
             // }
             this.players[id].extraSprite.text = extraText;
-            this.players[id].healthSprite.text = player.health;
+            this.players[id].healthSprite.text = player.health > 0 ? player.health : 'Dead';
+
         }
         if (this.lastRenderedRow != this.manager.lastRow) {
             console.log('Rendering next state');
@@ -286,6 +297,7 @@ export default class Game extends Phaser.State {
             this.timer.start();
             this.selectedTile = null;
         }
+
         let available = this.manager.getSelectableTiles();
         for (let i = 0; i < this.rows.length; i++) {
             let row = this.rows[i];

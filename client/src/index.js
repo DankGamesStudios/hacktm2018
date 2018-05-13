@@ -12,6 +12,7 @@ import Boot from './states/boot';
 // import Preload from 'states/preload';
 import Menu from './states/menu';
 import Game from './states/game';
+import GameOver from './states/gameover';
 import GameManager from './components/manager';
 
 
@@ -21,4 +22,5 @@ game.state.add('Boot', Boot);
 // game.state.add('Preloader', Preload);
 game.state.add('Menu', new Menu(game, manager));
 game.state.add('Game', new Game(game, manager));
+game.state.add('GameOver', new GameOver(game, manager));
 game.state.start('Boot');
