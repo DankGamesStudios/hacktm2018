@@ -77,6 +77,8 @@ class Game:
         # self.update_players()
 
     def update_players(self):
+        for row in self.game.grid.squares:
+            print(" ".join([str(elem)[0:2] for elem in row]))
         state = self.game.serialize()
         for p_id in self.players:
             bus.send(p_id, {'action': 'UPDATE', **state})
