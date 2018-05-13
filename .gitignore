@@ -6,6 +6,7 @@ client/dist/*
 # Server
 .pytest_cache
 __pycache__
+spamvenv
 
 .cache/
 .idea/

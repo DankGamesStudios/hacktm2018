@@ -28,22 +28,35 @@ class Laser(Powerup):
 
     def _activate_in_square(self, position, game, except_player):
         affected_players = player_at_position(game, position)
+        positions = {}
         for player in affected_players:
             # we must take into account that player could have a shield
             # or negative effects, that could alter or negate this damage
             if player != except_player:
                 player.damage(self.damage)
+                positions.update({
+                    "pos": player.position,
+                    "player_id": player.player_id
+                })
 
     def activate(self, game, on_player):
         print("Laser, frate!")
         player_x, player_y = on_player.position
+        positions = {}
         for idx in range(GRID_WIDTH):
             affected_pos = (player_x, idx)
-            self._activate_in_square(affected_pos, game, on_player)
-
+            positions.update(
+                self._activate_in_square(affected_pos, game, on_player)
+            )
         for idx in range(GRID_HEIGHT):
             affected_pos = (idx, player_y)
-            self._activate_in_square(affected_pos, game, on_player)
+            positions.update(
+                self._activate_in_square(affected_pos, game, on_player)
+            )
+        game.animations.append({
+            "power": "laser",
+            "positions": [positions]
+        })
 
 
 class Shield(Powerup):
@@ -54,6 +67,13 @@ class Shield(Powerup):
     def activate(self, game, on_player):
         print("activate shield")
         on_player.side_effects["shield"] = self.turns
+        game.animations.append({
+            "power": "shield",
+            "positions": [{
+                "pos": on_player.position,
+                "player_id": on_player.player_id
+            }],
+        })
 
 
 class Bomb(Powerup):
@@ -65,11 +85,16 @@ class Bomb(Powerup):
 
     def _activate_in_square(self, position, game, except_player, damage):
         affected_players = player_at_position(game, position)
+        positions = {}
         for player in affected_players:
             # we must take into account that player could have a shield
             # or negative effects, that could alter or negate this damage
             if player != except_player:
                 player.damage(damage)
+                positions.update({
+                    "pos": player.position,
+                    "player_id": player.player_id
+                })
 
     def activate(self, game, on_player):
 
@@ -90,12 +115,24 @@ class Bomb(Powerup):
         M_damage_pos = get_neighbours(on_player.position, 2)
         S_damage_pos = get_neighbours(on_player.position, 3)
 
+        positions = {}
         for position in XL_damage_pos:
-            self._activate_in_square(position, game, on_player, self.XL_damage)
+            positions.update(
+                self._activate_in_square(position, game, on_player, self.XL_damage)
+            )
         for position in M_damage_pos:
-            self._activate_in_square(position, game, on_player, self.M_damage)
+            positions.update(
+                self._activate_in_square(position, game, on_player, self.M_damage)
+            )
         for position in S_damage_pos:
-            self._activate_in_square(position, game, on_player, self.S_damage)
+            positions.update(
+                self._activate_in_square(position, game, on_player, self.S_damage)
+            )
+
+        game.animations.append({
+            "power": "bomb",
+            "positions": [positions]
+        })
 
 class Hammer(Powerup):
     def __init__(self):
@@ -107,3 +144,11 @@ class Hammer(Powerup):
         possible_victims = [player_id for player_id in game.players.keys() if player_id != on_player.player_id]
         random_victim = random.choice(possible_victims)
         game.players[random_victim].damage(self.damage)
+
+        game.animations.append({
+            "power": "hammer",
+            "positions": [{
+                "pos": game.players[random_victim].position,
+                "player_id": game.players[random_victim].player_id
+            }],
+        })
