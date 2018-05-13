@@ -222,7 +222,7 @@ export default class Game extends Phaser.State {
                 target.power.scale.setTo(2, 2);
                 this.game.add.tween(target.power).to({y: '+20'}, 500, 'Bounce', true);
                 this.game.time.events.add(100, () => {
-                    target.power.destroy()
+                    target.power.destroy();
                 }, this);
             }
             let newLocation = {x: target.tile.x, y: target.tile.y + this.row_size};
@@ -262,9 +262,9 @@ export default class Game extends Phaser.State {
             prompt = 'Waiting on other players';
         }
         this.roundText.text = 'Round ' + status.round + ', ' + prompt;
-        for (let i = 0; i < this.manager.players.length; i++) {
-            let player = this.manager.players[i]
-            let playerUI = this.players[player.name];
+        for (let id in this.manager.players) {
+            let player = this.manager.players[id];
+            let playerUI = this.players[id];
             let extraText = '';
             if (player.status === 'waiting') {
                 extraText = 'Slowpoke!';
@@ -273,8 +273,8 @@ export default class Game extends Phaser.State {
             //     let newTile = this.rows[player.y][player.x];
             //     this.updatePlayer(playerUI, newTile)
             // }
-            this.players[player.name].extraSprite.text = extraText;
-            this.players[player.name].healthSprite.text = player.health;
+            this.players[id].extraSprite.text = extraText;
+            this.players[id].healthSprite.text = player.health;
         }
         if (this.lastRenderedRow != this.manager.lastRow) {
             console.log('Rendering next state');
@@ -284,12 +284,13 @@ export default class Game extends Phaser.State {
             this.updatePlayers();
             this.timer.reset();
             this.timer.start();
+            this.selectedTile = null;
         }
         let available = this.manager.getSelectableTiles();
         for (let i = 0; i < this.rows.length; i++) {
             let row = this.rows[i];
             for (let col = 0; col < row.length; col++) {
-                if (!this.selectedTile && col >= available.minX && col <= available.maxX && i >= available.minY && i <= available.maxY) {
+                if (!this.selectedTile && i >= available.minX && i <= available.maxX && col >= available.minY && col <= available.maxY) {
                     row[col].tile.loadTexture('normal_tile_available');
                 } else if (this.selectedTile == row[col].tile) {
                     row[col].tile.loadTexture('normal_tile_selected');
