@@ -104,7 +104,6 @@ class Hammer(Powerup):
 
     def activate(self, game, on_player):
         print("STOP! Hammer time!")
-        import ipdb; ipdb.set_trace()
         possible_victims = [player_id for player_id in game.players.keys() if player_id != on_player.player_id]
         random_victim = random.choice(possible_victims)
         game.players[random_victim].damage(self.damage)
