@@ -281,6 +281,7 @@ export default class Game extends Phaser.State {
                     this.game.time.events.add(1500, () => {
                         sprite.destroy();
                     }, this);
+
                 }
             }
         }
@@ -328,9 +329,9 @@ export default class Game extends Phaser.State {
             console.log('Rendering next state');
             console.log(this.players, this.manager.players);
             this.lastRenderedRow = this.manager.lastRow;
+            this.updateAnimations();
             this.addNewRow(this.manager.rows[this.lastRenderedRow]);
             this.updatePlayers();
-            this.updateAnimations();
             this.timer.reset();
             this.timer.start();
             this.selectedTile = null;
