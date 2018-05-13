@@ -1,3 +1,4 @@
+import random
 
 from .options import GRID_HEIGHT, GRID_WIDTH
 
@@ -95,3 +96,15 @@ class Bomb(Powerup):
             self._activate_in_square(position, game, on_player, self.M_damage)
         for position in S_damage_pos:
             self._activate_in_square(position, game, on_player, self.S_damage)
+
+class Hammer(Powerup):
+    def __init__(self):
+        super().__init__("Hammer")
+        self.damage = 25
+
+    def activate(self, game, on_player):
+        print("STOP! Hammer time!")
+        import ipdb; ipdb.set_trace()
+        possible_victims = [player_id for player_id in game.players.keys() if player_id != on_player.player_id]
+        random_victim = random.choice(possible_victims)
+        game.players[random_victim].damage(self.damage)
