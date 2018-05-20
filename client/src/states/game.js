@@ -4,6 +4,7 @@ import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js'
 
 import VisualTimer from '../components/timer';
 import {Tile} from '../components/manager';
+import AnimationManager from '../components/animation-manager';
 
 // Phaser x low->high === left->right
 // Phaser y low->high === top->down
@@ -11,8 +12,9 @@ import {Tile} from '../components/manager';
 export default class Game extends Phaser.State {
 
     constructor(game, manager) {
-        super(game);
+        super();
         this.manager = manager;
+        this.animations = new AnimationManager(game);
 
         this.board_margin_x = 100;
         this.board_margin_y = 170 + 40;
@@ -109,7 +111,6 @@ export default class Game extends Phaser.State {
     }
 
     createTile(x, y, logical_x, logical_y, type) {
-        // console.log(type, Tile.LASER);
         let tile = this.game.add.sprite(x, y, 'normal_tile');
         let power = null;
         tile.original_scale = 1;
@@ -130,7 +131,6 @@ export default class Game extends Phaser.State {
         }
         tile.my_x = logical_x;
         tile.my_y = logical_y;
-
         tile.anchor.setTo(0.5, 0.5);
         tile.inputEnabled = true;
         tile.input.useHandCursor = true;
@@ -149,7 +149,6 @@ export default class Game extends Phaser.State {
         for (let row = 0; row < this.nr_rows; row++) {
             let new_row = [];
             let rowData = this.manager.rows[this.manager.lastRow - row - 1];
-            // console.log(rowData);
             for (let col = 0; col < this.nr_columns; col++) {
                 let x = this.padding_x + col * this.row_size + this.board_margin_x;
                 let y = this.padding_y + row * this.row_size + this.board_margin_y;
@@ -178,7 +177,7 @@ export default class Game extends Phaser.State {
                 console.log('timer completed')
             }
         });
-        this.timerText = this.game.add.text(
+        this.game.add.text(
             80,
             10 + this.offestGlobalY,
             'Timer',
@@ -188,7 +187,43 @@ export default class Game extends Phaser.State {
             44 + this.offestGlobalY,
             'Round 0',
             {font: '30px', fill: '#9eff63', align: 'center'});
-        console.log('Game state');
+        // this.testLaser();
+        // this.testBomb();
+        // this.testShield();
+        this.testHammer();
+    }
+
+    testLaser() {
+        let origin = this.rows[2][3].tile;
+        let t1 = this.rows[0][3].tile;
+        let t2 = this.rows[4][3].tile;
+        let t3 = this.rows[2][0].tile;
+        let t4 = this.rows[2][5].tile;
+        this.animations.renderLaser(origin.x, origin.y, t1.x, t1.y);
+        this.animations.renderLaser(origin.x, origin.y, t2.x, t2.y);
+        this.animations.renderLaser(origin.x, origin.y, t3.x, t3.y);
+        this.animations.renderLaser(origin.x, origin.y, t4.x, t4.y);
+    };
+
+    testBomb() {
+        let t3 = this.rows[2][3].tile;
+        let t4 = this.rows[4][2].tile;
+        this.animations.renderBomb(t3.x, t3.y);
+        this.animations.renderBomb(t4.x, t4.y);
+    };
+
+    testShield() {
+        let t3 = this.rows[3][5].tile;
+        let t4 = this.rows[4][0].tile;
+        this.animations.renderShield(t3.x, t3.y);
+        this.animations.renderShield(t4.x, t4.y);
+    };
+
+    testHammer() {
+        let t3 = this.rows[3][6].tile;
+        let t4 = this.rows[1][4].tile;
+        this.animations.renderHammer(t3.x, t3.y);
+        this.animations.renderHammer(t4.x, t4.y);
     };
 
     addNewRow(rowData) {
@@ -219,12 +254,10 @@ export default class Game extends Phaser.State {
             newRow.push(this.createTile(x, y, col, this.lastRenderedRow, rowData[col]));
         }
         this.rows.splice(0, 0, newRow);
-        // console.log('adding new row', this.rows);
     }
 
     setDirection(player, destination) {
         var scale = this.playerScale;
-        console.log(player);
         if (player.playerId == this.manager.playerId) {
             scale = scale * 1.7;
         }
@@ -233,31 +266,11 @@ export default class Game extends Phaser.State {
         } else {
             player.scale.x = scale;
         }
-        // if (player.y > destination.y) {
-        //     player.angle = 30;
-        // } else {
-        //     player.angle = -30;
-        // }
     }
 
-    animationAngle(source, destination) {
-        // console.log(source.y, destination.y, source.x, source.y);
-        // if (source.y > destination.y) {
-        //     // source.angle = 90;
-        // } else {
-        //     source.angle = -90;
-        // }
-        if (source.x > destination.x) {
-            source.angle = -90;
-        } else {
-            source.angle = 90;
-        }
-    }
-
-    updatePlayers() {
+    updatePlayerCharacters() {
         for (let playerId in this.manager.players) {
             let playerData = this.manager.players[playerId];
-            // console.log('update player', playerData);
             let player = this.players[playerData.p_id];
             if (playerData.health <= 0) {
                 if (player.sprite.alive) {
@@ -296,45 +309,29 @@ export default class Game extends Phaser.State {
     }
 
     updateAnimations() {
-        console.log(this.manager.animations);
         for (let animationIndex in this.manager.animations) {
             let animation = this.manager.animations[animationIndex];
-            if (animation.power === 'laser') {
-                console.log('rendering laser', animation);
-                let origin = this.rows[animation.origin[0]][animation.origin[1]].tile;
-                for (let positionIndex in animation.positions) {
-                    let position = animation.positions[positionIndex];
-                    let x = position.pos[0], y = position.pos[1];
-                    let tile = this.rows[x][y].tile;
-                    let sprite = this.game.add.sprite(origin.x, origin.y, 'laser');
-                    sprite.anchor.setTo(0.5, 0.5);
-                    // sprite.angle = this.setDirection(origin, tile);
-                    this.animationAngle(sprite, tile);
-                    this.game.add.tween(sprite).to({x: tile.x, y: tile.y}, 2000, 'Bounce', true);
-                    console.log(origin.x, origin.y, tile.x, tile.y);
-                    this.game.time.events.add(3000, () => {
-                        sprite.destroy();
-                    }, this);
+            let origin = this.rows[animation.origin[0]][animation.origin[1]].tile;
 
+            for (let positionIndex in animation.positions) {
+                let position = animation.positions[positionIndex];
+                let destTile = this.rows[position.pos[0]][position.pos[1]].tile;
+                if (animation.power === Tile.LASER) {
+                    this.animations.renderLaser(origin.x, origin.y, destTile.x, destTile.y);
+                } else if (animation.power === Tile.BOMB) {
+                    this.animations.renderBomb(destTile.x, destTile.y);
+                } else if (animation.power === Tile.SHIELD) {
+                    this.animations.renderShield(destTile.x, destTile.y);
+                } else if (animation.power === Tile.ANVIL) {
+                    this.animations.renderHammer(destTile.x, destTile.y);
                 }
             }
+
         }
     }
 
-    // makePlayersStatic() {
-    //     for (let playerId in  this.manager.players.keys()) {
-    //         let playerData = this.manager.players[playerId];
-    //         let player = this.players[playerData.name];
-    //         player.sprite.animations.play('walk', 2, true);
-    //     }
-    // }
-
-    update(game) {
-        if (this.manager.gameState != 'running') {
-            this.game.state.start('GameOver');
-        }
+    updateStatusText() {
         let status = this.manager.getStatus();
-        // console.log('status', status);
         let prompt = '';
         if (this.manager.you().health < 0) {
             prompt = 'You are dead';
@@ -344,33 +341,21 @@ export default class Game extends Phaser.State {
             prompt = 'Waiting on other players';
         }
         this.roundText.text = 'Round ' + status.round + ', ' + prompt;
+    }
+
+    updatePlayerText() {
         for (let id in this.manager.players) {
             let player = this.manager.players[id];
-            let playerUI = this.players[id];
             let extraText = '';
             if (player.status === 'waiting') {
                 extraText = 'Slowpoke!';
             }
-            // } else if (status.phase === 'done') {
-            //     let newTile = this.rows[player.y][player.x];
-            //     this.updatePlayer(playerUI, newTile)
-            // }
             this.players[id].extraSprite.text = extraText;
             this.players[id].healthSprite.text = player.health > 0 ? player.health : 'Dead';
-
         }
-        if (this.lastRenderedRow != this.manager.lastRow) {
-            console.log('Rendering next state');
-            console.log(this.players, this.manager.players);
-            this.lastRenderedRow = this.manager.lastRow;
-            this.updateAnimations();
-            this.addNewRow(this.manager.rows[this.lastRenderedRow]);
-            this.updatePlayers();
-            this.timer.reset();
-            this.timer.start();
-            this.selectedTile = null;
-        }
+    }
 
+    updateTiles() {
         let available = this.manager.getSelectableTiles();
         for (let i = 0; i < this.rows.length; i++) {
             let row = this.rows[i];
@@ -393,5 +378,28 @@ export default class Game extends Phaser.State {
                 }
             }
         }
-    };
-};
+    }
+
+    update(game) {
+        if (this.manager.gameState != 'running') {
+            this.game.time.events.add(5000, () => {
+                this.game.state.start('GameOver');
+            }, this);
+        }
+        this.updateStatusText();
+        this.updatePlayerText();
+        if (this.lastRenderedRow != this.manager.lastRow) {
+            console.info('Rendering turn ', this.manager.lastRow);
+            this.lastRenderedRow = this.manager.lastRow;
+            this.updateAnimations();
+            this.addNewRow(this.manager.rows[this.lastRenderedRow]);
+            this.updatePlayerCharacters();
+            this.timer.reset();
+            this.timer.start();
+            this.selectedTile = null;
+        }
+        this.updateTiles();
+    }
+    ;
+}
+;
