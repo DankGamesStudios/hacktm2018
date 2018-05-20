@@ -25,19 +25,6 @@ export default class GameManager {
         this.playerId = null;
         this.gameId = null;
         this.players = {};
-        // this.players = [{
-        //     name: 'You',
-        //     x: 4,
-        //     y: 3,
-        //     health: 100,
-        // }, {
-        //     name: 'thelegend27',
-        //     status: 'waiting',
-        //     x: 10,
-        //     y: 2,
-        //     health: 90,
-        // }];
-        this.myIndex = 0;
         this.round = 0;
         this.phase = 'select';
         this.lastRow = 5;
@@ -78,17 +65,16 @@ export default class GameManager {
     }
 
     selectTile(x, y) {
-        console.log("move to", x, y);
+        console.info("Moving to", x, y);
         this.sendMessage({action: 'MOVE', x: x, y: y});
     }
 
     handle_message(message) {
-        var action = message.action;
+        let action = message.action;
         // console.log("msg", message, action);
         switch (action) {
             case "START_GAME":
                 console.log('starting', message);
-                this.myIndex = message.p_index;
                 this.playerId = message.p_id;
                 this.gameId = message.g_id;
                 this.players = {};
@@ -126,14 +112,14 @@ export default class GameManager {
     }
 
     createSocket() {
-        let s = new WebSocket('ws://10.10.2.16:8000/');
+        let s = new WebSocket('ws://127.0.0.1:8100/');
         // let s = new WebSocket('ws://localhost:8000/');
         this.s = s;
         s.addEventListener('error', function (m) {
-            console.log("error");
+            console.log("error", m);
         });
         s.addEventListener('open', function (m) {
-            console.log("websocket connection open");
+            console.log("websocket connection open", m);
             s.send(JSON.stringify({
                 action: Action.CREATE_PLAYER_ID
             }));
@@ -157,10 +143,9 @@ export default class GameManager {
     }
 
     getStatus() {
-        let status = {
+        return {
             round: this.lastRow - 4,
             phase: this.phase,
         };
-        return status;
     }
 }

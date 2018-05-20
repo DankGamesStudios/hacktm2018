@@ -225,7 +225,7 @@ class Application(WebSocketApplication):
 
 def main():
     WebSocketServer(
-        ('', 8000),
+        ('', 8100),
         Resource(OrderedDict([
             ('/.*', Application)
         ])),
