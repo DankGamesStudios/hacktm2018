@@ -187,12 +187,9 @@ export default class Game extends Phaser.State {
             44 + this.offestGlobalY,
             'Round 0',
             {font: '30px', fill: '#9eff63', align: 'center'});
-        // this.testLaser();
-        // this.testBomb();
-        // this.testShield();
-        this.testHammer();
     }
 
+    // test functions for powerups
     testLaser() {
         let origin = this.rows[2][3].tile;
         let t1 = this.rows[0][3].tile;
@@ -225,6 +222,7 @@ export default class Game extends Phaser.State {
         this.animations.renderHammer(t3.x, t3.y);
         this.animations.renderHammer(t4.x, t4.y);
     };
+    // done tests powerups
 
     addNewRow(rowData) {
         for (let rIndex = 0; rIndex < this.rows.length; rIndex++) {
