@@ -7,6 +7,7 @@ client/dist/*
 .pytest_cache
 __pycache__
 spamvenv
+*.pyc
 
 .cache/
 .idea/

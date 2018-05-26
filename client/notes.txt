@@ -1,0 +1,35 @@
+// Animations
+// Laser
+// {"power":"laser",
+//  "positions":[
+//     {"pos":[1,3],"player_id":"77f79634-4902-4b63-8594-853fa79ff1a9"},
+//     {"pos":[1,6],"player_id":"69dd49da-48a7-464d-8e81-54c0683682ab"}],
+//  "origin":[1,0]
+// }
+// Shield
+// {"power":"shield",
+//     "positions":[{"pos":[1,6],"player_id":"76cc8ced-7699-46c2-87fe-68c6d8a1cdc4"}],
+//     "origin":[1,6]}
+// Bomb
+// {"power":"bomb",
+//  "positions":[{"pos":[1,2],"player_id":"ac77d97b-3fa8-4ef4-a0ff-887ce9be0e29"}],
+//  "origin":[1,4]}
+// Hammer
+// {"power":"hammer",
+//  "positions":[{"pos":[1,3],"player_id":"950ca8e7-1c80-461b-8376-b89920d4ed7e"}],
+//  "origin":[1,2]}
+
+
+//x,y Phaser coordinates, a Phaser sprite angle if a=0 === up angle
+x=0,y=0,a=-45                  a=0                          x=10,y=0,a=45
+
+
+
+
+a=-90                                                  a=90
+
+
+
+
+
+x=0,y=0,a=225                  a=180                          x=10,y=10,a=135

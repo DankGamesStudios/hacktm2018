@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "webpack:dev": "webpack --config webpack.config.js --progress --colors",
-    "server:dev": "webpack-dev-server --config webpack.config.js --open"
+    "server:dev": "webpack-dev-server --config webpack.config.js --open --host 0.0.0.0"
   },
   "author": "",
   "license": "Apache",

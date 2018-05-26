@@ -39,6 +39,6 @@ export default class Boot extends Phaser.State {
         if (this.ready){
             this.game.state.start('Game');
         }
-        this.statusText.text = 'Players connected: ' + this.gameManager.getAvailablePlayers();
+        this.statusText.text = 'Players connected: ' + this.gameManager.getAvailablePlayers() + '. You need 3 to start';
     };
 };
