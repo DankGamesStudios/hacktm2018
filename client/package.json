@@ -17,6 +17,6 @@
     "expose-loader": "^0.7.3",
     "file-loader": "^1.1.11",
     "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.11.5"
+    "webpack-dev-server": "^3.1.11"
   }
 }
